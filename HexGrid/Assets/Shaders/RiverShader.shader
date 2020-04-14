@@ -19,7 +19,7 @@
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
 
-		#iinclude "Water.cginc"
+		#include "Water.cginc"
 
         sampler2D _MainTex;
 
@@ -42,8 +42,9 @@
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
 			float river = River(IN.uv_MainTex, _MainTex);
-			
+
 			fixed4 c = saturate(_Color + river);
+
 			o.Albedo = c.rgb;
 			// Metallic and smoothness come from slider variables
 			o.Metallic = _Metallic;
