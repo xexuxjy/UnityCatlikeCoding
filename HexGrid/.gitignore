@@ -1,2 +1,5 @@
 /Library
 /obj
+/Temp
+*.suo
+/.vs

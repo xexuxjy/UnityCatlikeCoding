@@ -245,6 +245,10 @@ public class HexGridChunk : MonoBehaviour
         Estuaries.AddQuadUV(new Vector2(0f, 1f), new Vector2(0f, 0f),new Vector2(0f, 1f), new Vector2(0f, 0f));
         Estuaries.AddTriangleUV(new Vector2(0f, 0f), new Vector2(0f, 1f), new Vector2(0f, 1f));
         Estuaries.AddQuadUV(0f, 0f, 0f, 1f);
+
+        Estuaries.AddQuadUV2(new Vector2(1f, 0f), new Vector2(1f, 1f),new Vector2(1f, 0f), new Vector2(0.5f, 1f));
+        Estuaries.AddTriangleUV2(new Vector2(0.5f, 1f), new Vector2(1f, 0f), new Vector2(0f, 0f));
+        Estuaries.AddQuadUV2(new Vector2(0.5f, 1f), new Vector2(0f, 1f),new Vector2(0f, 0f), new Vector2(0f, 0f));
     }
 
 

@@ -39,6 +39,16 @@ public class HexGrid : MonoBehaviour
 
     }
 
+    public int NumCellsX
+    {
+        get { return m_cellCountX; }
+    }
+
+    public int NumCellsZ
+    {
+        get { return m_cellCountZ; }
+    }
+
     private void CreateChunks()
     {
         m_gridChunks = new HexGridChunk[ChunkCountX * ChunkCountZ];
@@ -83,6 +93,17 @@ public class HexGrid : MonoBehaviour
         if (cellIndex >= 0 && cellIndex < m_cells.Length)
         {
             return m_cells[cellIndex];
+        }
+        return null;
+    }
+
+    private Random m_random = new Random();
+    public HexCell GetRandomCell()
+    {
+        int index = Random.Range(0, m_cells.Length);
+        if(index >= 0 && index < m_cells.Length)
+        {
+            return m_cells[index];
         }
         return null;
     }

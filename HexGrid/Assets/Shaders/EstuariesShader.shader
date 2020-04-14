@@ -24,6 +24,8 @@
         struct Input
         {
             float2 uv_MainTex;
+			float2 uv2_MainTex;
+			float3 worldPos;
         };
 
         half _Glossiness;
@@ -39,9 +41,14 @@
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
-            // Albedo comes from a texture tinted by color
-            fixed4 c = tex2D (_MainTex, IN.uv_MainTex) * _Color;
-            o.Albedo = c.rgb;
+			float shore = IN.uv_MainTex.y;
+			float foam = Foam(shore, IN.worldPos.xz, _MainTex);
+			float waves = Waves(IN.worldPos.xz, _MainTex);
+			waves *= 1 - shore;
+			
+			fixed4 c = fixed4(IN.uv2_MainTex, 1, 1);
+
+			o.Albedo = c.rgb;
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
