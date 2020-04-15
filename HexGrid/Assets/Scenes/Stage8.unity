@@ -10319,7 +10319,7 @@ MonoBehaviour:
   TerrainIterations: 50
   NumRivers: 8
   NumRoads: 10
-  NumWater: 5
+  NumWater: 10
   Rivers: 1
   Roads: 1
   Water: 1
