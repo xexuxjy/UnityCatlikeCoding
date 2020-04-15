@@ -8,9 +8,12 @@ public class DebugSetup : MonoBehaviour
     public int NumRivers = 4;
     public int NumRoads = 5;
 
+    public int NumWater = 5;
+
+
     public bool Rivers;
     public bool Roads;
-
+    public bool Water;
 
     bool m_haveBuilt = false;
     private void Update()
@@ -24,7 +27,7 @@ public class DebugSetup : MonoBehaviour
                 HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
 
                 int brushSize = Random.Range(1, 4);
-                int elevation = Random.Range(1, 5);
+                int elevation = Random.Range(1, 3);
                 int color = Random.Range(0, 7);
 
                 mapEditor.SetBrushSize(brushSize);
@@ -44,6 +47,23 @@ public class DebugSetup : MonoBehaviour
                 BuildRiverOrRoad(mapEditor, NumRoads, 8, 15, true);
             }
 
+            if(Water)
+            {
+                for (int i = 0; i < NumWater; ++i)
+                {
+                    HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
+
+                    int brushSize = Random.Range(1, 4);
+                    int waterLevel = Random.Range(0, 2);
+
+                    mapEditor.SetBrushSize(brushSize);
+                    mapEditor.SetWaterLevel(waterLevel);
+                    mapEditor.SetApplyElevation(false);
+                    mapEditor.SetApplyWaterLevel(true);
+                    mapEditor.EditCells(hexCell);
+                }
+            }
+            mapEditor.SetBrushSize(1);
 
             m_haveBuilt = true;
 

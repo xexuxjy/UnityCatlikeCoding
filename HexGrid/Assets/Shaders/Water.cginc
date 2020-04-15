@@ -22,15 +22,12 @@ float River(float2 riverUV, sampler2D noiseTex)
 	uv.x = uv.x * 0.0625 + _Time.y * 0.005;
 	uv.y -= _Time.y * 0.25;
 	float4 noise = tex2D(noiseTex, uv);
-	/*
 	float2 uv2 = riverUV;
 	uv2.x = uv2.x * 0.0625 - _Time.y * 0.0052;
 	uv2.y -= _Time.y * 0.23;
 	float4 noise2 = tex2D(noiseTex, uv2);
 
 	return noise.x * noise2.w;
-	*/
-	return noise.x;
 }
 
 float Waves(float2 worldXZ, sampler2D noiseTex) 

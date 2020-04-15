@@ -106,7 +106,7 @@ public class HexCell : MonoBehaviour
             return;
         }
         HexCell neighbour = GetNeighbour(dir);
-        if(!neighbour || Elevation < neighbour.Elevation)
+        if(!IsValidRiverDestination(neighbour))
         {
             return;
         }
@@ -164,6 +164,7 @@ public class HexCell : MonoBehaviour
             if (m_waterLevel != value)
             {
                 m_waterLevel = value;
+                ValidateRivers();
                 Refresh();
             }
         }
@@ -196,16 +197,7 @@ public class HexCell : MonoBehaviour
             uiPosition.z = -position.y;
             UIRectTransform.localPosition = uiPosition;
 
-
-            if (HasOutgoingRiver && Elevation < GetNeighbour(OutgoingRiverDirection).Elevation)
-            {
-                RemoveOutgoingRiver();
-            }
-
-            if (HasIncomingRiver && Elevation > GetNeighbour(IncomingRiverDirection).Elevation)
-            {
-                RemoveIncomingRiver();
-            }
+            ValidateRivers();
 
             foreach(HexDirection dir in Enum.GetValues(typeof(HexDirection)))
             {
@@ -354,6 +346,24 @@ public class HexCell : MonoBehaviour
         {
             return HasIncomingRiver ? IncomingRiverDirection : OutgoingRiverDirection;
         }
+    }
+
+    bool IsValidRiverDestination(HexCell neighbour)
+    {
+        return neighbour && (Elevation >= neighbour.Elevation || WaterLevel == neighbour.Elevation);
+    }
+
+    private void ValidateRivers()
+    {
+        if(HasOutgoingRiver && !IsValidRiverDestination(GetNeighbour(OutgoingRiverDirection)))
+        {
+            RemoveOutgoingRiver();
+        }
+        if(HasIncomingRiver && !GetNeighbour(IncomingRiverDirection).IsValidRiverDestination(this))
+        {
+            RemoveIncomingRiver();
+        }
+
     }
 
 }
