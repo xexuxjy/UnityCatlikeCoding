@@ -12,6 +12,9 @@ public class HexGridChunk : MonoBehaviour
     public HexMesh Water;
     public HexMesh WaterShore;
     public HexMesh Estuaries;
+    public HexFeatureManager FeatureManager;
+
+    private List<IHexMeshChunkModule> m_chunkModules = new List<IHexMeshChunkModule>();
 
     HexCell[] m_cells;
 
@@ -23,6 +26,13 @@ public class HexGridChunk : MonoBehaviour
         GridCanvas = GetComponentInChildren<Canvas>();
         m_cells = new HexCell[HexMetrics.ChunkSizeX * HexMetrics.ChunkSizeZ];
         ShowUI(false);
+        m_chunkModules.Add(Terrain);
+        m_chunkModules.Add(Rivers);
+        m_chunkModules.Add(Roads);
+        m_chunkModules.Add(Water);
+        m_chunkModules.Add(WaterShore);
+        m_chunkModules.Add(Estuaries);
+        m_chunkModules.Add(FeatureManager);
     }
 
     public void Refresh()
@@ -63,22 +73,24 @@ public class HexGridChunk : MonoBehaviour
 
     public void TriangulateCells()
     {
-        Terrain.Clear();
-        Rivers.Clear();
-        Roads.Clear();
-        Water.Clear();
-        WaterShore.Clear();
-        Estuaries.Clear();
+        foreach (IHexMeshChunkModule chunkModule in m_chunkModules)
+        {
+            if (chunkModule != null)
+            {
+                chunkModule.Clear();
+            }
+        }
         foreach (HexCell cell in m_cells)
         {
             Triangulate(cell);
         }
-        Terrain.Apply();
-        Rivers.Apply();
-        Roads.Apply();
-        Water.Apply();
-        WaterShore.Apply();
-        Estuaries.Apply();
+        foreach (IHexMeshChunkModule chunkModule in m_chunkModules)
+        {
+            if (chunkModule != null)
+            {
+                chunkModule.Apply();
+            }
+        }
     }
 
     public void Triangulate(HexCell cell)
@@ -86,6 +98,11 @@ public class HexGridChunk : MonoBehaviour
         for (HexDirection dir = HexDirection.NE; dir <= HexDirection.NW; ++dir)
         {
             Triangulate(dir, cell);
+        }
+
+        if (!(cell.HasRiver || cell.HasRoads || cell.IsUnderwater))
+        {
+            FeatureManager.AddFeature(cell.Position);
         }
     }
 

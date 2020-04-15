@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
-public class HexMesh : MonoBehaviour
+public class HexMesh : MonoBehaviour, IHexMeshChunkModule
 {
     public bool UseCollider;
     public bool UseColours;

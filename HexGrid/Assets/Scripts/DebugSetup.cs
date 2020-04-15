@@ -64,6 +64,10 @@ public class DebugSetup : MonoBehaviour
                 }
             }
             mapEditor.SetBrushSize(1);
+            mapEditor.SetApplyElevation(false);
+            mapEditor.SetApplyWaterLevel(false);
+            mapEditor.SetRiverMode((int)OptionalToggle.Ignore);
+            mapEditor.SetRoadMode((int)OptionalToggle.Ignore);
 
             m_haveBuilt = true;
 
