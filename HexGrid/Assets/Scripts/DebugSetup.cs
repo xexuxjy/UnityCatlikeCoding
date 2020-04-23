@@ -5,6 +5,7 @@ using UnityEngine;
 public class DebugSetup : MonoBehaviour
 {
     public int TerrainIterations = 50;
+    public int UrbanFeatureIterations = 50;
     public int NumRivers = 4;
     public int NumRoads = 5;
 
@@ -68,6 +69,15 @@ public class DebugSetup : MonoBehaviour
             mapEditor.SetApplyWaterLevel(false);
             mapEditor.SetRiverMode((int)OptionalToggle.Ignore);
             mapEditor.SetRoadMode((int)OptionalToggle.Ignore);
+
+
+            for(int i=0;i< UrbanFeatureIterations;++i)
+            {
+                HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
+                hexCell.UrbanDensityLevel = Random.Range(1, 4);
+                hexCell.FarmDensityLevel = Random.Range(1, 4);
+                hexCell.PlantDensityLevel = Random.Range(1, 4);
+            }
 
             m_haveBuilt = true;
 

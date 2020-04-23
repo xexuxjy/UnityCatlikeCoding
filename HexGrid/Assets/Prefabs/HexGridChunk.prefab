@@ -533,8 +533,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4efab467c4844c47affd60320e88c05, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FeatureCube: {fileID: 4487836219394503190, guid: 7ef5b409210e8de4c9767da09c84804f,
-    type: 3}
+  UrbanFeatureCollections:
+  - prefabs:
+    - {fileID: 544535034659734612, guid: a58f8fe8aacefaa42b6090a6fad26b23, type: 3}
+    - {fileID: 1118668738896043960, guid: 3f1ed651ecf8dd043ae83da159b4d95b, type: 3}
+  - prefabs:
+    - {fileID: 1118668738896043960, guid: 3f1ed651ecf8dd043ae83da159b4d95b, type: 3}
+    - {fileID: 424381076845032099, guid: 56921ad0900ea12449fca1c522d09431, type: 3}
+  - prefabs:
+    - {fileID: 424381076845032099, guid: 56921ad0900ea12449fca1c522d09431, type: 3}
+    - {fileID: 3682525924808085909, guid: 537bced25cf1c51488a76df3f912a419, type: 3}
+  FarmFeatureCollections:
+  - prefabs:
+    - {fileID: 544535034659734612, guid: dba2c0000d77efd4c928ec21159a1156, type: 3}
+    - {fileID: 544535034659734612, guid: f63d0c3ea28fc714c932f8af722ce588, type: 3}
+  - prefabs:
+    - {fileID: 544535034659734612, guid: f63d0c3ea28fc714c932f8af722ce588, type: 3}
+    - {fileID: 544535034659734612, guid: 3a8a4560eb705ee4890dca4123a4df9e, type: 3}
+  - prefabs:
+    - {fileID: 544535034659734612, guid: 3a8a4560eb705ee4890dca4123a4df9e, type: 3}
+    - {fileID: 544535034659734612, guid: 208eac91429d44246b2bdaae22fdc22d, type: 3}
+  PlantFeatureCollections:
+  - prefabs:
+    - {fileID: 544535034659734612, guid: 1ee187966b9e68645b57e486b3941cad, type: 3}
+    - {fileID: 544535034659734612, guid: 4beab03566f3ee84bb844d6a449ab17f, type: 3}
+  - prefabs:
+    - {fileID: 544535034659734612, guid: 4beab03566f3ee84bb844d6a449ab17f, type: 3}
+    - {fileID: 544535034659734612, guid: d73b855c4559f514892d6d82f5e8a452, type: 3}
+  - prefabs:
+    - {fileID: 544535034659734612, guid: d73b855c4559f514892d6d82f5e8a452, type: 3}
+    - {fileID: 544535034659734612, guid: ac9cc4ab1965b4742b2c41945517fba9, type: 3}
 --- !u!1 &1566393498924734957
 GameObject:
   m_ObjectHideFlags: 0

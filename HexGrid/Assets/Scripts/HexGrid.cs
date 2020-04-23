@@ -9,6 +9,7 @@ public class HexGrid : MonoBehaviour
     public const int ChunkCountX = 4;
     public const int ChunkCountZ = 3;
 
+    public int Seed;
 
     public Color DefaultColor;
     public Color TouchedColor;
@@ -30,6 +31,8 @@ public class HexGrid : MonoBehaviour
     void Awake()
     {
         HexMetrics.NoiseSource = NoiseSource;
+        HexMetrics.InitialiseHashGrid(Seed);
+
         m_cellCountX = ChunkCountX * HexMetrics.ChunkSizeX;
         m_cellCountZ = ChunkCountZ * HexMetrics.ChunkSizeZ;
 

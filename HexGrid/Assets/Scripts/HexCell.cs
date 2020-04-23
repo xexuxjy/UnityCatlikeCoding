@@ -10,6 +10,8 @@ public class HexCell : MonoBehaviour
     public RectTransform UIRectTransform;
     public HexGridChunk GridChunk;
 
+
+
     private bool m_hasIncomingRiver;
     private bool m_hasOutgoingRiver;
 
@@ -365,5 +367,53 @@ public class HexCell : MonoBehaviour
         }
 
     }
+
+
+    private int m_urbanDensityLevel;
+    public int UrbanDensityLevel
+    {
+        get { return m_urbanDensityLevel; }
+        set
+        {
+            if (m_urbanDensityLevel != value)
+            {
+                m_urbanDensityLevel = value;
+                RefreshSelfOnly();
+            }
+
+        }
+    }
+
+
+    private int m_farmDensityLevel;
+    public int FarmDensityLevel
+    {
+        get { return m_farmDensityLevel; }
+        set
+        {
+            if (m_farmDensityLevel != value)
+            {
+                m_farmDensityLevel = value;
+                RefreshSelfOnly();
+            }
+
+        }
+    }
+
+    private int m_plantDensityLevel;
+    public int PlantDensityLevel
+    {
+        get { return m_plantDensityLevel; }
+        set
+        {
+            if (m_plantDensityLevel != value)
+            {
+                m_plantDensityLevel = value;
+                RefreshSelfOnly();
+            }
+
+        }
+    }
+
 
 }

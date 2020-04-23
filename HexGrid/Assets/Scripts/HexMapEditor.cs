@@ -13,12 +13,18 @@ public class HexMapEditor : MonoBehaviour
 
     private int m_activeElevation;
     private int m_activeWaterLevel;
+    private int m_activeUrbanDensityLevel;
+    private int m_activeFarmDensityLevel;
+    private int m_activePlantDensityLevel;
 
     private Color m_activeColor;
 
     bool m_applyColor;
     bool m_applyElevation = true;
     bool m_applyWaterLevel = true;
+    bool m_applyUrbanDensity = true;
+    bool m_applyFarmDensity = true;
+    bool m_applyPlantDensity = true;
 
     int m_brushSize = 0;
 
@@ -129,20 +135,25 @@ public class HexMapEditor : MonoBehaviour
             {
                 cell.WaterLevel = m_activeWaterLevel;
             }
+            if(m_applyUrbanDensity)
+            {
+                cell.UrbanDensityLevel = m_activeUrbanDensityLevel;
+            }
+            
 
 
             if(m_riverMode == OptionalToggle.No)
             {
                 cell.RemoveRiver();
             }
+
             if (m_roadMode == OptionalToggle.No)
             {
                 cell.RemoveRoads();
             }
 
 
-
-            else if (m_isDrag)
+            if (m_isDrag)
             {
                 HexCell otherCell = cell.GetNeighbour(m_dragDirection.Opposite());
                 if(otherCell)
@@ -192,12 +203,39 @@ public class HexMapEditor : MonoBehaviour
 
     public void SetApplyWaterLevel(bool toggle)
     {
-        if(toggle)
-        {
-            int ibreak = 0;
-        }
         m_applyWaterLevel = toggle;
     }
+
+    public void SetUrbanDensityLevel(float value)
+    {
+        m_activeUrbanDensityLevel= (int)value;
+    }
+
+    public void SetApplyUrbanDensityLevel(bool toggle)
+    {
+        m_applyUrbanDensity = toggle;
+    }
+
+    public void SetFarmDensityLevel(float value)
+    {
+        m_activeFarmDensityLevel = (int)value;
+    }
+
+    public void SetApplyFarmDensityLevel(bool toggle)
+    {
+        m_applyFarmDensity = toggle;
+    }
+
+    public void SetPlantDensityLevel(float value)
+    {
+        m_activePlantDensityLevel = (int)value;
+    }
+
+    public void SetApplyPlantDensityLevel(bool toggle)
+    {
+        m_applyPlantDensity = toggle;
+    }
+
 
     public void SetBrushSize(float value)
     {
@@ -225,11 +263,6 @@ public class HexMapEditor : MonoBehaviour
         m_waterMode = (OptionalToggle)value;
     }
 
-    //public HexMesh Terrain;
-    //public HexMesh River;
-    //public HexMesh Roads;
-    //public HexMesh Water;
-    //public HexMesh WaterShore;
     public void ShowTerrainMesh(bool value)
     {
         HexGridChunk[] gridChunks = GameObject.FindObjectsOfType<HexGridChunk>();

@@ -46,6 +46,40 @@ public static class HexMetrics
 
     public const int MaxRoadElevationDifference = 1;
 
+    public const  int  HashGridSize = 256;
+    public const float HashGridScale = 0.25f;
+    static HexHash[] m_hashGrid = null;
+
+
+    public static void InitialiseHashGrid(int seed)
+    {
+        Random.State currentState = Random.state;
+        Random.InitState(seed);
+        m_hashGrid = new HexHash[HashGridSize * HashGridSize];
+        for(int i=0;i<m_hashGrid.Length;++i)
+        {
+            m_hashGrid[i] = HexHash.Create();
+        }
+        Random.state = currentState;
+    }
+
+    public static HexHash SampleHashGrid(Vector3 position)
+    {
+        int x = (int)(position.x * HashGridScale) % HashGridSize;
+        if(x < 0)
+        {
+            x += HashGridSize;
+        }
+
+        int z = (int)(position.z * HashGridScale)% HashGridSize;
+        if(z < 0)
+        {
+            z += HashGridSize;
+        }
+
+        return m_hashGrid[x + z * HashGridSize];
+    }
+
 
     public static Vector3[] Corners = new Vector3[]
     {
@@ -156,5 +190,53 @@ public static class HexMetrics
     }
 
 
+    private static float[][] m_featureThresholds = 
+    {
+        new float[] {0.0f, 0.0f, 0.4f},
+        new float[] {0.0f, 0.4f, 0.6f},
+        new float[] {0.4f, 0.6f, 0.8f}
+    };
+
+    public static float[] GetFeatureThresholds(int level)
+    {
+        if(level < 0 || level >= m_featureThresholds.Length)
+        {
+            int ibreak = 0;
+        }
+        return m_featureThresholds[level];
+    }
+
+
+
 }
 
+
+
+public struct HexHash
+{
+    public float a, b,c,choice,randomRotation;
+
+    public static HexHash Create()
+    {
+        HexHash hash;
+        hash.a = Random.value * 0.999f; ;
+        hash.b = Random.value * 0.999f; ;
+        hash.c = Random.value * 0.999f; ;
+        hash.choice = Random.value * 0.999f; ;
+        hash.randomRotation = Random.value * 0.999f; ;
+        return hash;
+    }
+}
+
+
+
+[System.Serializable]
+public struct HexFeatureCollection
+{
+    public Transform[] prefabs;
+
+    public Transform Pick(float choice)
+    {
+        return prefabs[(int)(choice * prefabs.Length)];
+    }
+}
