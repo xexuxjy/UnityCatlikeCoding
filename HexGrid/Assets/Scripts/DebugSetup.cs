@@ -11,6 +11,8 @@ public class DebugSetup : MonoBehaviour
 
     public int NumWater = 5;
 
+    public int NumWalls = 40;
+
 
     public bool Rivers;
     public bool Roads;
@@ -77,6 +79,12 @@ public class DebugSetup : MonoBehaviour
                 hexCell.UrbanDensityLevel = Random.Range(1, 4);
                 hexCell.FarmDensityLevel = Random.Range(1, 4);
                 hexCell.PlantDensityLevel = Random.Range(1, 4);
+            }
+
+            for(int i=0;i<NumWalls;++i)
+            {
+                HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
+                hexCell.Walled = true;
             }
 
             m_haveBuilt = true;

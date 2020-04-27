@@ -20,6 +20,9 @@ public static class HexMetrics
 
     public const float ElevationStep = 5.0f;
 
+    public const float WallHeight = 3.0f;
+    public const float WallWidth = 0.75f;
+
 
     public const int TerracesPerSlope = 2;
     public const int TerraceSteps = TerracesPerSlope * 2 + 1;
@@ -45,6 +48,8 @@ public static class HexMetrics
     public const float WaterElevationOffset = -0.5f;
 
     public const int MaxRoadElevationDifference = 1;
+
+    public const float WallElevationOffset = VerticalTerraceStepSize;
 
     public const  int  HashGridSize = 256;
     public const float HashGridScale = 0.25f;
@@ -157,6 +162,17 @@ public static class HexMetrics
         return Color.Lerp(a, b, h);
     }
 
+
+    public static Vector3 WallLerp(Vector3 near,Vector3 far)
+    {
+        near.x += (far.x - near.x) * 0.5f;
+        near.z += (far.z - near.z) * 0.5f;
+
+        float v = near.y < far.y ? WallElevationOffset : (1f - WallElevationOffset);
+        near.y += (far.y - near.y) * v;
+        return near;
+    }
+
     public static HexEdgeType GetEdgeType(int elevation1,int elevation2)
     {
         if (elevation1 == elevation2)
@@ -207,6 +223,17 @@ public static class HexMetrics
     }
 
 
+    public static Vector3 WallThicknessOffset(Vector3 near, Vector3 far)
+    {
+        Vector3 offset;
+        offset.x = far.x - near.x;
+        offset.y = 0f;
+        offset.z = far.z - near.z;
+
+        return offset.normalized * (WallWidth * 0.5f);
+
+        //return offset;
+    }
 
 }
 

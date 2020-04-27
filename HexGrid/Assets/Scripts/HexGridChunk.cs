@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 public class HexGridChunk : MonoBehaviour
@@ -12,6 +14,9 @@ public class HexGridChunk : MonoBehaviour
     public HexMesh Water;
     public HexMesh WaterShore;
     public HexMesh Estuaries;
+    public HexMesh Walls;
+
+
     public HexFeatureManager FeatureManager;
 
     private List<IHexMeshChunkModule> m_chunkModules = new List<IHexMeshChunkModule>();
@@ -26,13 +31,17 @@ public class HexGridChunk : MonoBehaviour
         GridCanvas = GetComponentInChildren<Canvas>();
         m_cells = new HexCell[HexMetrics.ChunkSizeX * HexMetrics.ChunkSizeZ];
         ShowUI(false);
-        m_chunkModules.Add(Terrain);
-        m_chunkModules.Add(Rivers);
-        m_chunkModules.Add(Roads);
-        m_chunkModules.Add(Water);
-        m_chunkModules.Add(WaterShore);
-        m_chunkModules.Add(Estuaries);
-        m_chunkModules.Add(FeatureManager);
+
+        Type t  = typeof(HexGridChunk);
+        FieldInfo[] fields = t.GetFields(BindingFlags.Public | BindingFlags.Instance);
+        foreach(FieldInfo field in fields)
+        {
+            if(field.GetValue(this) is IHexMeshChunkModule)
+            {
+                m_chunkModules.Add((IHexMeshChunkModule)field.GetValue(this));
+            }
+        }
+
     }
 
     public void Refresh()
@@ -450,7 +459,11 @@ public class HexGridChunk : MonoBehaviour
         bridge.y = neighbour.Position.y - cell.Position.y;
         EdgeVertices edges2 = new EdgeVertices(edges.v1 + bridge, edges.v5 + bridge);
 
-        if (cell.HasRiverThroughEdge(dir))
+        bool hasRoad = cell.HasRoadThroughEdge(dir);
+        bool hasRiver = cell.HasRiverThroughEdge(dir);
+
+
+        if (hasRiver)
         {
             if (!cell.IsUnderwater)
             {
@@ -475,13 +488,15 @@ public class HexGridChunk : MonoBehaviour
 
         if (cell.GetEdgeType(dir) == HexEdgeType.Slope)
         {
-            TriangulateEdgeTerraces(edges, cell, edges2, neighbour, cell.HasRoadThroughEdge(dir));
+            TriangulateEdgeTerraces(edges, cell, edges2, neighbour, hasRoad);
         }
         else
         {
-            TriangulateEdgeStrip(edges, edges2, cell.Color, neighbour.Color, cell.HasRoadThroughEdge(dir));
+            TriangulateEdgeStrip(edges, edges2, cell.Color, neighbour.Color, hasRoad);
         }
 
+
+        FeatureManager.AddWall(edges, cell, edges2, neighbour,hasRoad,hasRiver);
 
 
         HexCell nextNeighbor = cell.GetNeighbour(dir.Next());
@@ -583,6 +598,9 @@ public class HexGridChunk : MonoBehaviour
             Terrain.AddTriangle(bottom, left, right);
             Terrain.AddTriangleColor(bottomCell.Color, leftCell.Color, rightCell.Color);
         }
+
+        FeatureManager.AddWall(bottom, bottomCell, left, leftCell, right, rightCell);
+
     }
 
     public void TriangulateCornerTerraces(Vector3 begin, HexCell beginCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)
@@ -909,6 +927,7 @@ public class HexGridChunk : MonoBehaviour
         Rivers.AddQuadUnperturbed(v1, v2, v3, v4);
         Rivers.AddQuadUV(0f, 1f, 0.8f, 1f);
     }
+
 
 
 }

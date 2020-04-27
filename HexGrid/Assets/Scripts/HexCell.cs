@@ -415,5 +415,17 @@ public class HexCell : MonoBehaviour
         }
     }
 
-
+    private bool m_walled;
+    public bool Walled
+    {
+        get { return m_walled; }
+        set 
+        { 
+            if(m_walled != value)
+            {
+                m_walled = value;
+                Refresh();
+            }
+        }
+    }
 }

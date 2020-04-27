@@ -30,7 +30,7 @@ public class HexMapEditor : MonoBehaviour
 
     OptionalToggle m_riverMode;
     OptionalToggle m_roadMode;
-    OptionalToggle m_waterMode;
+    OptionalToggle m_wallMode;
 
     bool m_isDrag;
     HexDirection m_dragDirection;
@@ -152,6 +152,14 @@ public class HexMapEditor : MonoBehaviour
                 cell.RemoveRoads();
             }
 
+           
+
+            if (m_wallMode != OptionalToggle.Ignore)
+            {
+                cell.Walled = m_wallMode == OptionalToggle.Yes;
+            }
+
+
 
             if (m_isDrag)
             {
@@ -258,10 +266,11 @@ public class HexMapEditor : MonoBehaviour
         m_roadMode = (OptionalToggle)value;
     }
 
-    public void SetWaterMode(int value)
+    public void SetWallMole(int value)
     {
-        m_waterMode = (OptionalToggle)value;
+        m_wallMode = (OptionalToggle)value;
     }
+
 
     public void ShowTerrainMesh(bool value)
     {
