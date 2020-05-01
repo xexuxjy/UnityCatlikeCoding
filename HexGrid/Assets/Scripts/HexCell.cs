@@ -11,7 +11,6 @@ public class HexCell : MonoBehaviour
     public HexGridChunk GridChunk;
 
 
-
     private bool m_hasIncomingRiver;
     private bool m_hasOutgoingRiver;
 
@@ -122,10 +121,13 @@ public class HexCell : MonoBehaviour
 
         m_hasOutgoingRiver = true;
         m_outgoingRiverDirection = dir;
+        m_specialFeatureIndex = 0;
+
 
         neighbour.RemoveIncomingRiver();
         neighbour.m_hasIncomingRiver = true;
         neighbour.m_incomingRiverDirection = dir.Opposite();
+        neighbour.m_specialFeatureIndex = 0;
 
         SetRoad((int)dir, false);
 
@@ -319,6 +321,25 @@ public class HexCell : MonoBehaviour
 
     public void AddRoad(HexDirection dir)
     {
+        if(HasRoadThroughEdge(dir))
+        {
+            return;
+        }
+
+        if(HasRiverThroughEdge(dir))
+        {
+            return;
+        }
+        if(GetEleveationDifference(dir) > HexMetrics.MaxRoadElevationDifference)
+        {
+            return;
+        }
+
+        if(HasSpecialFeature || GetNeighbour(dir).HasSpecialFeature)
+        {
+            return;
+        }
+
         if(!HasRoadThroughEdge(dir) && !HasRiverThroughEdge(dir) && GetEleveationDifference(dir) <= HexMetrics.MaxRoadElevationDifference)
         {
             SetRoad((int)dir, true);
@@ -428,4 +449,34 @@ public class HexCell : MonoBehaviour
             }
         }
     }
+
+    private int m_specialFeatureIndex = 0;
+    public int SpecialFeatureIndex
+    {
+        get
+        {
+            return m_specialFeatureIndex;
+        }
+        set
+        {
+            if (m_specialFeatureIndex != value && !HasRiver)
+            {
+                m_specialFeatureIndex = value;
+                RemoveRoads();
+                RefreshSelfOnly();
+            }
+        }
+    }
+
+
+    public bool HasSpecialFeature
+    {
+        get { return m_specialFeatureIndex > 0; }
+    }
+
+
+
+
+
+
 }

@@ -113,6 +113,12 @@ public class HexGridChunk : MonoBehaviour
         {
             FeatureManager.AddFeature(cell,cell.Position);
         }
+
+        if(!cell.IsUnderwater && cell.HasSpecialFeature)
+        {
+            FeatureManager.AddSpecialFeature(cell, cell.Position);
+        }
+
     }
 
 
@@ -441,8 +447,6 @@ public class HexGridChunk : MonoBehaviour
             Vector3 position = (center + edges.v1 + edges.v5) * (1f / 3f);
             FeatureManager.AddFeature(cell,position);
         }
-
-
     }
 
 
@@ -847,6 +851,12 @@ public class HexGridChunk : MonoBehaviour
             }
 
             roadCenter += corner * 0.5f;
+
+            if (cell.IncomingRiverDirection == dir.Next() && (cell.HasRoadThroughEdge(dir.Next2()) ||cell.HasRoadThroughEdge(dir.Opposite())))
+            {
+                FeatureManager.AddBridge(roadCenter, center - corner * 0.5f);
+            }
+
             center += corner * 0.25f;
 
         }
@@ -890,8 +900,12 @@ public class HexGridChunk : MonoBehaviour
                 return;
             }
 
-            roadCenter += HexMetrics.GetSolidEdgeMiddle(middle) * 0.25f;
-
+            Vector3 offset = HexMetrics.GetSolidEdgeMiddle(middle);
+            roadCenter += offset * 0.25f;
+            if (dir == middle && cell.HasRoadThroughEdge(dir.Opposite()));
+            {
+                FeatureManager.AddBridge(roadCenter, center - offset * (HexMetrics.InnerToOuter * 0.7f));
+            }
         }
 
         Vector3 mL = Vector3.Lerp(center, edges.v1, roadInterpolators.x);

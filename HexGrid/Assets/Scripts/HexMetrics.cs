@@ -20,10 +20,6 @@ public static class HexMetrics
 
     public const float ElevationStep = 5.0f;
 
-    public const float WallHeight = 3.0f;
-    public const float WallWidth = 0.75f;
-
-
     public const int TerracesPerSlope = 2;
     public const int TerraceSteps = TerracesPerSlope * 2 + 1;
 
@@ -49,7 +45,13 @@ public static class HexMetrics
 
     public const int MaxRoadElevationDifference = 1;
 
+    public const float WallHeight = 4.0f;
+    public const float WallYOffset = -1;
+    public const float WallWidth = 0.75f;
     public const float WallElevationOffset = VerticalTerraceStepSize;
+    public const float WallTowerThreshold = 0.5f;
+
+    public const float BridgeDesignLength = 7f;
 
     public const  int  HashGridSize = 256;
     public const float HashGridScale = 0.25f;
@@ -169,7 +171,7 @@ public static class HexMetrics
         near.z += (far.z - near.z) * 0.5f;
 
         float v = near.y < far.y ? WallElevationOffset : (1f - WallElevationOffset);
-        near.y += (far.y - near.y) * v;
+        near.y += (far.y - near.y) * v + WallYOffset;
         return near;
     }
 

@@ -563,7 +563,14 @@ MonoBehaviour:
   - prefabs:
     - {fileID: 544535034659734612, guid: d73b855c4559f514892d6d82f5e8a452, type: 3}
     - {fileID: 544535034659734612, guid: ac9cc4ab1965b4742b2c41945517fba9, type: 3}
+  SpecialFeatures:
+  - {fileID: 6284144717557497382, guid: 0780e9dd6871c1d45831703bb1e21ec6, type: 3}
+  - {fileID: 3688095090014398627, guid: 7222ad87e2fb9d44abc74def87715855, type: 3}
+  - {fileID: 4714778454097938053, guid: d6fd6469fcf59c0449e9dffc03ddc3a3, type: 3}
   Walls: {fileID: 7484652051844608037}
+  WallTower: {fileID: 1688725218657909243, guid: 21b04a1101f1abc4cb8eb1043ee0ef98,
+    type: 3}
+  Bridge: {fileID: 6082274314443637350, guid: ddabdd455b78ea540a929beb7a915b65, type: 3}
 --- !u!1 &1566393498924734957
 GameObject:
   m_ObjectHideFlags: 0

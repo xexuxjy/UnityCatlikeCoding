@@ -13,6 +13,7 @@ public class DebugSetup : MonoBehaviour
 
     public int NumWalls = 40;
 
+    public int NumSpecials = 100;
 
     public bool Rivers;
     public bool Roads;
@@ -38,7 +39,6 @@ public class DebugSetup : MonoBehaviour
                 mapEditor.SelectColor(color);
                 mapEditor.EditCells(hexCell);
             }
-
 
             if (Rivers)
             {
@@ -72,8 +72,7 @@ public class DebugSetup : MonoBehaviour
             mapEditor.SetRiverMode((int)OptionalToggle.Ignore);
             mapEditor.SetRoadMode((int)OptionalToggle.Ignore);
 
-
-            for(int i=0;i< UrbanFeatureIterations;++i)
+            for (int i=0;i< UrbanFeatureIterations;++i)
             {
                 HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
                 hexCell.UrbanDensityLevel = Random.Range(1, 4);
@@ -86,6 +85,13 @@ public class DebugSetup : MonoBehaviour
                 HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
                 hexCell.Walled = true;
             }
+
+            for (int i = 0; i < NumSpecials; ++i)
+            {
+                HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
+                hexCell.SpecialFeatureIndex = Random.Range(1, 4);
+            }
+
 
             m_haveBuilt = true;
 

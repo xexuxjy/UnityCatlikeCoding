@@ -7,8 +7,12 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
     public HexFeatureCollection[] FarmFeatureCollections;
     public HexFeatureCollection[] PlantFeatureCollections;
 
+    public Transform[] SpecialFeatures;
+
     public HexMesh Walls;
 
+    public Transform WallTower;
+    public Transform Bridge;
 
     private Transform m_container;
 
@@ -45,6 +49,11 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
 
     public void AddFeature(HexCell cell, Vector3 position)
     {
+        if(cell.HasSpecialFeature)
+        {
+            return;
+        }
+
         HexHash hexHash = HexMetrics.SampleHashGrid(position);
         if (hexHash.a >= 0.25f * cell.UrbanDensityLevel)
         {
@@ -166,7 +175,13 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
         {
             if (hasRightWall)
             {
-                AddWallSegment(pivot, left, pivot, right);
+                bool hasTower = false;
+                if (leftCell.Elevation == rightCell.Elevation)
+                {
+                    HexHash hash = HexMetrics.SampleHashGrid((pivot + left + right) * (1f / 3f));
+                    hasTower = hash.choice < HexMetrics.WallTowerThreshold;
+                }
+                AddWallSegment(pivot, left, pivot, right, hasTower);
             }
             else if (leftCell.Elevation < rightCell.Elevation)
             {
@@ -193,7 +208,7 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
 
     }
 
-    public void AddWallSegment(Vector3 nearLeft,Vector3 farLeft,Vector3 nearRight,Vector3 farRight)
+    public void AddWallSegment(Vector3 nearLeft,Vector3 farLeft,Vector3 nearRight,Vector3 farRight,bool addTower = false)
     {
         nearLeft = HexMetrics.PerturbVector(nearLeft);
         farLeft = HexMetrics.PerturbVector(farLeft);
@@ -233,6 +248,15 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
         // top
         Walls.AddQuadUnperturbed(t1, t2, v3, v4);
 
+        if (addTower)
+        {
+            Transform towerInstance = Instantiate(WallTower);
+            towerInstance.transform.localPosition = (left + right) * 0.5f;
+            Vector3 rightDirection = right - left;
+            rightDirection.y = 0;
+            towerInstance.transform.right = rightDirection;
+            towerInstance.SetParent(m_container, false);
+        }
     }
 
     public void AddWallCap(Vector3 near,Vector3 far)
@@ -273,6 +297,33 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
         Walls.AddQuadUnperturbed(v1, point, v3, pointTop);
         Walls.AddQuadUnperturbed(point, v2, pointTop, v4);
         Walls.AddTriangleUnperturbed(pointTop, v3, v4);
+    }
+
+
+    public void AddBridge(Vector3 roadCenter1,Vector3 roadCenter2)
+    {
+        roadCenter1 = HexMetrics.PerturbVector(roadCenter1);
+        roadCenter2 = HexMetrics.PerturbVector(roadCenter2);
+
+
+        float distance = Vector3.Distance(roadCenter1, roadCenter2);
+
+        float bridgeScale = distance / HexMetrics.BridgeDesignLength;
+
+        Transform bridgeInstance = Instantiate(Bridge);
+        bridgeInstance.transform.localPosition = (roadCenter1 + roadCenter2) * 0.5f;
+        bridgeInstance.transform.forward = roadCenter2 - roadCenter1;
+        bridgeInstance.localScale = new Vector3 (1f,1f, bridgeScale);
+        bridgeInstance.SetParent(m_container, false);
+    }
+
+    public void AddSpecialFeature(HexCell cell, Vector3 position)
+    {
+        Transform instance = Instantiate(SpecialFeatures[cell.SpecialFeatureIndex - 1]);
+        instance.localPosition = HexMetrics.PerturbVector(position);
+        HexHash hash = HexMetrics.SampleHashGrid(position);
+        instance.localRotation = Quaternion.Euler(0f, 360f * hash.randomRotation, 0f);
+        instance.SetParent(m_container, false);
     }
 
 }

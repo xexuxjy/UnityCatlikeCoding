@@ -16,6 +16,7 @@ public class HexMapEditor : MonoBehaviour
     private int m_activeUrbanDensityLevel;
     private int m_activeFarmDensityLevel;
     private int m_activePlantDensityLevel;
+    private int m_specialFeatureIndex;
 
     private Color m_activeColor;
 
@@ -25,6 +26,8 @@ public class HexMapEditor : MonoBehaviour
     bool m_applyUrbanDensity = true;
     bool m_applyFarmDensity = true;
     bool m_applyPlantDensity = true;
+    bool m_applySpecialFeature = true;
+
 
     int m_brushSize = 0;
 
@@ -140,8 +143,6 @@ public class HexMapEditor : MonoBehaviour
                 cell.UrbanDensityLevel = m_activeUrbanDensityLevel;
             }
             
-
-
             if(m_riverMode == OptionalToggle.No)
             {
                 cell.RemoveRiver();
@@ -159,6 +160,10 @@ public class HexMapEditor : MonoBehaviour
                 cell.Walled = m_wallMode == OptionalToggle.Yes;
             }
 
+            if (m_applySpecialFeature)
+            {
+                cell.SpecialFeatureIndex = m_specialFeatureIndex;
+            }
 
 
             if (m_isDrag)
@@ -345,4 +350,13 @@ public class HexMapEditor : MonoBehaviour
     }
 
 
+    public void SetApplySpecialFeature(bool toggle)
+    {
+        m_applySpecialFeature= toggle;
+    }
+
+    public void SetSpecialFeatureIndex(float index)
+    {
+        m_specialFeatureIndex = (int)index;
+    }
 }
