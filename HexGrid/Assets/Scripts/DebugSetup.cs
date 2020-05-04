@@ -32,11 +32,12 @@ public class DebugSetup : MonoBehaviour
 
                 int brushSize = Random.Range(1, 4);
                 int elevation = Random.Range(1, 3);
-                int color = Random.Range(0, 7);
+                int terrainType = Random.Range(0, 5);
 
                 mapEditor.SetBrushSize(brushSize);
                 mapEditor.SetElevation(elevation);
-                mapEditor.SelectColor(color);
+                mapEditor.SetTerrainType(terrainType);
+                //mapEditor.SE(color);
                 mapEditor.EditCells(hexCell);
             }
 

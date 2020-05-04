@@ -57,6 +57,8 @@ public static class HexMetrics
     public const float HashGridScale = 0.25f;
     static HexHash[] m_hashGrid = null;
 
+    public static Color[] Colors;
+
 
     public static void InitialiseHashGrid(int seed)
     {

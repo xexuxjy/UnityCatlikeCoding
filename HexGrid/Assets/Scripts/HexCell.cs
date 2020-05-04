@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 
@@ -140,19 +141,22 @@ public class HexCell : MonoBehaviour
     }
 
 
-
-
-    private Color m_color;
     public Color Color
     {
-        get { return m_color; }
+        get { return TerrainTypeIndex >=0 ? HexMetrics.Colors[TerrainTypeIndex] :Color.white; }
+    }
+
+    private int m_terrainTypeIndex;
+    public int TerrainTypeIndex
+    {
+        get { return m_terrainTypeIndex; }
         set
         {
-            if (m_color == value)
+            if (m_terrainTypeIndex == value)
             {
                 return;
             }
-            m_color = value;
+            m_terrainTypeIndex = value;
             Refresh();
         }
     }
@@ -190,33 +194,42 @@ public class HexCell : MonoBehaviour
             {
                 return;
             }
-
             m_elevation = value;
-            Vector3 position = transform.localPosition;
-            position.y = value * HexMetrics.ElevationStep;
-            position.y += (HexMetrics.SampleNoise(position).y * 2 - 1) * HexMetrics.ElevationPerturbationStrength;
-            transform.localPosition = position;
 
-            Vector3 uiPosition = UIRectTransform.localPosition;
-            uiPosition.z = -position.y;
-            UIRectTransform.localPosition = uiPosition;
+            RefreshPosition();
 
             ValidateRivers();
 
-            foreach(HexDirection dir in Enum.GetValues(typeof(HexDirection)))
+            foreach (HexDirection dir in Enum.GetValues(typeof(HexDirection)))
             {
-                if((HasRoadThroughEdge(dir)) && GetEleveationDifference(dir) > HexMetrics.MaxRoadElevationDifference)
+                if ((HasRoadThroughEdge(dir)) && GetEleveationDifference(dir) > HexMetrics.MaxRoadElevationDifference)
                 {
                     SetRoad((int)dir, false);
                 }
 
             }
 
-
-
-            Refresh();
         }
     }
+
+    public void RefreshPosition()
+    {
+        Vector3 position = transform.localPosition;
+        position.y = m_elevation * HexMetrics.ElevationStep;
+        position.y += (HexMetrics.SampleNoise(position).y * 2 - 1) * HexMetrics.ElevationPerturbationStrength;
+        transform.localPosition = position;
+
+        Vector3 uiPosition = UIRectTransform.localPosition;
+        uiPosition.z = -position.y;
+        UIRectTransform.localPosition = uiPosition;
+
+
+
+
+        Refresh();
+
+    }
+
 
     public void Refresh()
     {
@@ -475,8 +488,50 @@ public class HexCell : MonoBehaviour
     }
 
 
+    public void Load(BinaryReader binReader)
+    {
+        m_terrainTypeIndex = binReader.ReadByte();
+        m_elevation = binReader.ReadByte();
+        m_waterLevel = binReader.ReadByte();
+        m_urbanDensityLevel = binReader.ReadByte();
+        m_farmDensityLevel = binReader.ReadByte();
+        m_plantDensityLevel = binReader.ReadByte();
+        m_specialFeatureIndex = binReader.ReadByte();
+        m_walled = binReader.ReadBoolean();
+        m_hasIncomingRiver = binReader.ReadBoolean();
+        m_incomingRiverDirection = (HexDirection)binReader.ReadByte();
+        m_hasOutgoingRiver = binReader.ReadBoolean();
+        m_outgoingRiverDirection = (HexDirection)binReader.ReadByte();
+        for (int i = 0; i < m_roads.Length; ++i)
+        {
+            m_roads[i] = binReader.ReadBoolean();
+        }
+
+        RefreshPosition();
+
+    }
+
+    public void Save(BinaryWriter binWriter)
+    {
+        binWriter.Write((byte)m_terrainTypeIndex);
+        binWriter.Write((byte)m_elevation);
+        binWriter.Write((byte)m_waterLevel);
+        binWriter.Write((byte)m_urbanDensityLevel);
+        binWriter.Write((byte)m_farmDensityLevel);
+        binWriter.Write((byte)m_plantDensityLevel);
+        binWriter.Write((byte)m_specialFeatureIndex);
+        binWriter.Write(m_walled);
+        binWriter.Write(m_hasIncomingRiver);
+        binWriter.Write((byte)m_incomingRiverDirection);
+        binWriter.Write(m_hasOutgoingRiver);
+        binWriter.Write((byte)m_outgoingRiverDirection);
+        for(int i=0;i<m_roads.Length;++i)
+        {
+            binWriter.Write(m_roads[i]);
+        }
 
 
 
+    }
 
 }

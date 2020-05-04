@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,7 +9,6 @@ using UnityEngine.EventSystems;
 
 public class HexMapEditor : MonoBehaviour
 {
-    public Color[] Colors;
     public HexGrid HexGrid;
 
     private int m_activeElevation;
@@ -18,7 +18,7 @@ public class HexMapEditor : MonoBehaviour
     private int m_activePlantDensityLevel;
     private int m_specialFeatureIndex;
 
-    private Color m_activeColor;
+    private int m_activeTerrainTypeIndex;
 
     bool m_applyColor;
     bool m_applyElevation = true;
@@ -42,7 +42,7 @@ public class HexMapEditor : MonoBehaviour
 
     private void Awake()
     {
-        SelectColor(0);
+        //SelectColor(0);
     }
 
     public void Update()
@@ -126,9 +126,9 @@ public class HexMapEditor : MonoBehaviour
     {
         if (cell != null)
         {
-            if (m_applyColor)
+            if (m_activeTerrainTypeIndex >= 0)
             {
-                cell.Color = m_activeColor;
+                cell.TerrainTypeIndex = m_activeTerrainTypeIndex;
             }
             if (m_applyElevation)
             {
@@ -185,19 +185,24 @@ public class HexMapEditor : MonoBehaviour
         }
     }
 
-    public void SelectColor(int index)
+    public void SetTerrainType(int index)
     {
-        if(index == -1)
-        {
-            m_applyColor = false;
-        }
-
-        if (index >= 0 && index < Colors.Length)
-        {
-            m_applyColor = true;
-            m_activeColor = Colors[index];
-        }
+        m_activeTerrainTypeIndex = index;
     }
+
+    //public void SelectColor(int index)
+    //{
+    //    if(index == -1)
+    //    {
+    //        m_applyColor = false;
+    //    }
+
+    //    if (index >= 0 && index < Colors.Length)
+    //    {
+    //        m_applyColor = true;
+    //        m_activeTerrainTypeIndex = Colors[index];
+    //    }
+    //}
 
     public void SetElevation(float value)
     {
@@ -359,4 +364,26 @@ public class HexMapEditor : MonoBehaviour
     {
         m_specialFeatureIndex = (int)index;
     }
+
+    public void Load()
+    {
+        string path = Path.Combine(Application.persistentDataPath, "test.map");
+        using (BinaryReader binReader =new BinaryReader(File.Open(path, FileMode.Open)))
+        {
+            binReader.ReadInt32();
+            HexGrid.Load(binReader);
+        }
+    }
+
+    public void Save()
+    {
+        Debug.Log(Application.persistentDataPath);
+        string path = Path.Combine(Application.persistentDataPath, "test.map");
+        using (BinaryWriter binWriter = new BinaryWriter(File.OpenWrite(path)))
+        {
+            binWriter.Write(0);
+            HexGrid.Save(binWriter);
+        }
+    }
+
 }
