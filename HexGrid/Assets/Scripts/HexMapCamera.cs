@@ -24,11 +24,25 @@ public class HexMapCamera : MonoBehaviour
     float m_zoom = 1.0f;
     float m_rotationAngle;
 
+    static HexMapCamera instance;
 
     // Start is called before the first frame update
     void Start()
     {
-        
+        instance = this;
+    }
+
+    public static bool Locked
+    {
+        set
+        {
+            instance.enabled = !value;
+        }
+    }
+
+    public static void ValidatePosition()
+    {
+        instance.AdjustPosition(0f, 0f);
     }
 
     // Update is called once per frame
@@ -108,10 +122,10 @@ public class HexMapCamera : MonoBehaviour
     private Vector3 ClampPosition(Vector3 position)
     {
 
-        float xMax = (HexGrid.ChunkCountX * HexMetrics.ChunkSizeX - 0.5f) * (2f * HexMetrics.InnerRadius);
+        float xMax = (HexGrid.CellCountX - 0.5f) * (2f * HexMetrics.InnerRadius);
         position.x = Mathf.Clamp(position.x, 0, xMax);
 
-        float zMax = (HexGrid.ChunkCountZ * HexMetrics.ChunkSizeZ - 1) * (1.5f * HexMetrics.OuterRadius);
+        float zMax = (HexGrid.CellCountZ - 1) * (1.5f * HexMetrics.OuterRadius);
         position.z = Mathf.Clamp(position.z, 0, zMax);
 
         return position;

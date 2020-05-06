@@ -365,25 +365,10 @@ public class HexMapEditor : MonoBehaviour
         m_specialFeatureIndex = (int)index;
     }
 
-    public void Load()
-    {
-        string path = Path.Combine(Application.persistentDataPath, "test.map");
-        using (BinaryReader binReader =new BinaryReader(File.Open(path, FileMode.Open)))
-        {
-            binReader.ReadInt32();
-            HexGrid.Load(binReader);
-        }
-    }
 
-    public void Save()
+    public void NewMap()
     {
-        Debug.Log(Application.persistentDataPath);
-        string path = Path.Combine(Application.persistentDataPath, "test.map");
-        using (BinaryWriter binWriter = new BinaryWriter(File.OpenWrite(path)))
-        {
-            binWriter.Write(0);
-            HexGrid.Save(binWriter);
-        }
+        //HexGrid.CreateMap();
     }
 
 }
