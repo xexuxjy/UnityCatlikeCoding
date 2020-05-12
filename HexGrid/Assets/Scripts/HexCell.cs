@@ -141,11 +141,6 @@ public class HexCell : MonoBehaviour
     }
 
 
-    public Color Color
-    {
-        get { return TerrainTypeIndex >=0 ? HexMetrics.Colors[TerrainTypeIndex] :Color.white; }
-    }
-
     private int m_terrainTypeIndex;
     public int TerrainTypeIndex
     {

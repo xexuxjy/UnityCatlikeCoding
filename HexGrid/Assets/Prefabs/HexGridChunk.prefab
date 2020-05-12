@@ -98,6 +98,7 @@ MonoBehaviour:
   UseColours: 0
   UseUVs: 1
   UseUV2s: 0
+  UseTerrainTypes: 0
 --- !u!1 &442110983
 GameObject:
   m_ObjectHideFlags: 0
@@ -196,6 +197,7 @@ MonoBehaviour:
   UseColours: 0
   UseUVs: 0
   UseUV2s: 0
+  UseTerrainTypes: 0
 --- !u!1 &647373629
 GameObject:
   m_ObjectHideFlags: 0
@@ -294,6 +296,7 @@ MonoBehaviour:
   UseColours: 0
   UseUVs: 1
   UseUV2s: 0
+  UseTerrainTypes: 0
 --- !u!1 &1735534716
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,6 +395,7 @@ MonoBehaviour:
   UseColours: 0
   UseUVs: 1
   UseUV2s: 0
+  UseTerrainTypes: 0
 --- !u!1 &2003556033
 GameObject:
   m_ObjectHideFlags: 0
@@ -490,6 +494,7 @@ MonoBehaviour:
   UseColours: 0
   UseUVs: 1
   UseUV2s: 1
+  UseTerrainTypes: 0
 --- !u!1 &2038000925
 GameObject:
   m_ObjectHideFlags: 0
@@ -625,7 +630,7 @@ Canvas:
   m_OverrideSorting: 0
   m_OverridePixelPerfect: 0
   m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
@@ -711,6 +716,7 @@ MonoBehaviour:
   WaterShore: {fileID: 359502499}
   Estuaries: {fileID: 2003556034}
   Walls: {fileID: 7484652051844608037}
+  SplatTextureArray: {fileID: 0}
   FeatureManager: {fileID: 2038000926}
 --- !u!1 &7532586370311272593
 GameObject:
@@ -810,6 +816,7 @@ MonoBehaviour:
   UseColours: 1
   UseUVs: 0
   UseUV2s: 0
+  UseTerrainTypes: 1
 --- !u!1 &8016727840258676160
 GameObject:
   m_ObjectHideFlags: 0
@@ -908,3 +915,4 @@ MonoBehaviour:
   UseColours: 0
   UseUVs: 0
   UseUV2s: 0
+  UseTerrainTypes: 0

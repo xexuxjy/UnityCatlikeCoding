@@ -10,6 +10,7 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
     public bool UseColours;
     public bool UseUVs;
     public bool UseUV2s;
+    public bool UseTerrainTypes;
 
     Mesh m_hexMesh;
     MeshCollider m_meshCollider;
@@ -19,6 +20,7 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
     [NonSerialized] List<Color> m_colors;
     [NonSerialized] List<Vector2> m_uvs;
     [NonSerialized] List<Vector2> m_uv2s;
+    [NonSerialized] List<Vector3> m_terrainTypes;
 
     private void Awake()
     {
@@ -47,6 +49,10 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
         if (UseUV2s)
         {
             m_uv2s = ListPool<Vector2>.Get();
+        }
+        if (UseTerrainTypes)
+        {
+            m_terrainTypes = ListPool<Vector3>.Get();
         }
 
     }
@@ -78,6 +84,11 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
             ListPool<Vector2>.Return(m_uv2s);
         }
 
+        if (UseTerrainTypes)
+        {
+            m_hexMesh.SetUVs(2, m_terrainTypes);
+            ListPool<Vector3>.Return(m_terrainTypes);
+        }
 
         if (m_meshCollider)
         {
@@ -255,4 +266,17 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
     }
 
 
+    public void AddTriangleTerrainTypes(Vector3 types)
+    {
+        m_terrainTypes.Add(types);
+        m_terrainTypes.Add(types);
+        m_terrainTypes.Add(types);
+    }
+    public void AddQuadTerrainTypes(Vector3 types)
+    {
+        m_terrainTypes.Add(types);
+        m_terrainTypes.Add(types);
+        m_terrainTypes.Add(types);
+        m_terrainTypes.Add(types);
+    }
 }

@@ -33,13 +33,11 @@ public class HexGrid : MonoBehaviour
     HexCell[] m_cells;
     HexGridChunk[] m_gridChunks;
 
-    public Color[] Colors;
 
     void Awake()
     {
         HexMetrics.NoiseSource = NoiseSource;
         HexMetrics.InitialiseHashGrid(Seed);
-        HexMetrics.Colors = Colors;
 
         CreateMap(CellCountX,CellCountZ);
 
@@ -210,10 +208,6 @@ public class HexGrid : MonoBehaviour
         int chunkZ = z / HexMetrics.ChunkSizeZ;
 
         int index = (chunkZ * m_chunkCountX) + chunkX;
-        if(index >= m_gridChunks.Length)
-        {
-            int ibreak = 0;
-        }
 
         HexGridChunk chunk = m_gridChunks[index];
 

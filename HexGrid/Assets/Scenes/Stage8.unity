@@ -7572,6 +7572,7 @@ MonoBehaviour:
   UseColours: 0
   UseUVs: 0
   UseUV2s: 0
+  UseTerrainTypes: 0
 --- !u!23 &827868553
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -9160,11 +9161,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HexGridChunk
-      objectReference: {fileID: 0}
-    - target: {fileID: 6159399185387422495, guid: 07bf225cbdaa851448566ddae0862bb9,
-        type: 3}
-      propertyPath: m_AdditionalShaderChannelsFlag
-      value: 25
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}

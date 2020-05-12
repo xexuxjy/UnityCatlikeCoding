@@ -57,9 +57,6 @@ public static class HexMetrics
     public const float HashGridScale = 0.25f;
     static HexHash[] m_hashGrid = null;
 
-    public static Color[] Colors;
-
-
     public static void InitialiseHashGrid(int seed)
     {
         Random.State currentState = Random.state;
@@ -219,10 +216,6 @@ public static class HexMetrics
 
     public static float[] GetFeatureThresholds(int level)
     {
-        if(level < 0 || level >= m_featureThresholds.Length)
-        {
-            int ibreak = 0;
-        }
         return m_featureThresholds[level];
     }
 
