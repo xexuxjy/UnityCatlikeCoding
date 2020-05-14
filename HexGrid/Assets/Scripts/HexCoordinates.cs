@@ -73,4 +73,12 @@ public struct HexCoordinates
     {
         return String.Format("{0}\n{1}\n{2}", X, Y, Z);
     }
+
+    public int DistanceTo(HexCoordinates other)
+    {
+        return ((X < other.X ? other.X - X : X - other.X) +
+            (Y < other.Y ? other.Y - Y : Y - other.Y) +
+            (Z < other.Z ? other.Z - Z : Z - other.Z)) / 2;
+    }
+
 }

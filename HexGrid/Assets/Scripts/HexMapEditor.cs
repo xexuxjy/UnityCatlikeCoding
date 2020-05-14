@@ -10,6 +10,7 @@ using UnityEngine.EventSystems;
 public class HexMapEditor : MonoBehaviour
 {
     public HexGrid HexGrid;
+    public Material TerrainMaterial;
 
     private int m_activeElevation;
     private int m_activeWaterLevel;
@@ -19,6 +20,8 @@ public class HexMapEditor : MonoBehaviour
     private int m_specialFeatureIndex;
 
     private int m_activeTerrainTypeIndex;
+
+    bool m_editMode;
 
     bool m_applyColor;
     bool m_applyElevation = true;
@@ -40,9 +43,9 @@ public class HexMapEditor : MonoBehaviour
     HexCell m_previousHexCell;
 
 
-    private void Awake()
+    void Awake()
     {
-        //SelectColor(0);
+        TerrainMaterial.DisableKeyword("GRID_ON");
     }
 
     public void Update()
@@ -64,7 +67,7 @@ public class HexMapEditor : MonoBehaviour
         if (Physics.Raycast(inputRay, out hit))
         {
             HexCell hexCell = HexGrid.GetCell(hit.point);
-            if(m_previousHexCell && m_previousHexCell != hexCell)
+            if (m_previousHexCell && m_previousHexCell != hexCell)
             {
                 ValidateDrag(hexCell);
             }
@@ -73,8 +76,15 @@ public class HexMapEditor : MonoBehaviour
                 m_isDrag = false;
             }
 
+            if (m_editMode)
+            { 
+                EditCells(hexCell);
+            }
+            else
+            {
+                HexGrid.FindDistancesTo(hexCell);
+            }
 
-            EditCells(hexCell);
             m_previousHexCell = hexCell;
         }
         else
@@ -363,6 +373,24 @@ public class HexMapEditor : MonoBehaviour
     public void SetSpecialFeatureIndex(float index)
     {
         m_specialFeatureIndex = (int)index;
+    }
+
+    public void ShowGrid(bool visible)
+    {
+        if(visible)
+        {
+            TerrainMaterial.EnableKeyword("GRID_ON");
+        }
+        else
+        {
+            TerrainMaterial.DisableKeyword("GRID_ON");
+        }
+    }
+
+    public void SetEditMode(bool editMode)
+    {
+        m_editMode = editMode;
+        HexGrid.ShowUI(!editMode);
     }
 
 

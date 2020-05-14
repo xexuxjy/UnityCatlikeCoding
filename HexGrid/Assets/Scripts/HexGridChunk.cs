@@ -36,7 +36,7 @@ public class HexGridChunk : MonoBehaviour
     {
         GridCanvas = GetComponentInChildren<Canvas>();
         m_cells = new HexCell[HexMetrics.ChunkSizeX * HexMetrics.ChunkSizeZ];
-        ShowUI(false);
+        //ShowUI(false);
 
         Type t  = typeof(HexGridChunk);
         FieldInfo[] fields = t.GetFields(BindingFlags.Public | BindingFlags.Instance);
@@ -307,10 +307,7 @@ public class HexGridChunk : MonoBehaviour
 
     public void TriangulateWithoutRiver(HexDirection dir, HexCell cell, Vector3 center, EdgeVertices edges)
     {
-        Color c = cell.Color;
-        c = BlendColor1;
-
-        TriangulateEdgeFan(center, edges, c, cell.TerrainTypeIndex);
+        TriangulateEdgeFan(center, edges, BlendColor1, cell.TerrainTypeIndex);
         if (cell.HasRoads)
         {
             Vector2 roadInterpolators = GetRoadInterpolators(dir, cell);
@@ -654,7 +651,7 @@ public class HexGridChunk : MonoBehaviour
         types.z = rightCell.TerrainTypeIndex;
 
         Terrain.AddTriangle(begin, v3, v4);
-        Terrain.AddTriangleColor(beginCell.Color, c3, c4);
+        Terrain.AddTriangleColor(BlendColor1, c3, c4);
         Terrain.AddTriangleTerrainTypes(types);
 
         for (int i = 2; i < HexMetrics.TerraceSteps; ++i)
@@ -749,7 +746,7 @@ public class HexGridChunk : MonoBehaviour
             Color c1 = c2;
 
             v2 = HexMetrics.PerturbVector(HexMetrics.TerraceLerp(begin, left, i));
-            c1 = HexMetrics.TerraceLerp(beginCell.Color, leftCell.Color, i);
+            c1 = HexMetrics.TerraceLerp(BlendColor1, BlendColor2, i);
 
             Terrain.AddTriangle(HexMetrics.PerturbVector(v1), v2, boundary);
             Terrain.AddTriangleColor(c1, c2, boundaryColour);

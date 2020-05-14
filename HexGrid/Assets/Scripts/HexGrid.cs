@@ -159,7 +159,8 @@ public class HexGrid : MonoBehaviour
         Text label = Instantiate(HexLabelPrefab);
         //label.rectTransform.SetParent(GridCanvas.transform,false);
         label.rectTransform.anchoredPosition = new Vector3(position.x, position.z);
-        label.text = hexCell.Coordinates.ToStringSeparateLines();
+        
+        //label.text = hexCell.Coordinates.ToStringSeparateLines();
 
         hexCell.UIRectTransform = label.rectTransform;
 
@@ -226,6 +227,115 @@ public class HexGrid : MonoBehaviour
         }
     }
 
+    //public void FindDistancesTo(HexCell cell)
+    //{
+    //    for (int i = 0; i < m_cells.Length; i++)
+    //    {
+    //        m_cells[i].Distance = cell.Coordinates.DistanceTo(m_cells[i].Coordinates);
+    //    }
+    //}
+
+    public void FindDistancesTo(HexCell cell)
+    {
+        StopAllCoroutines();
+        StartCoroutine(Search(cell));
+    }
+
+    IEnumerator Search(HexCell cell)
+    {
+        for (int i = 0; i < m_cells.Length; i++)
+        {
+            m_cells[i].Distance = int.MaxValue;
+        }
+
+
+        WaitForSeconds delay = new WaitForSeconds(1 / 60f);
+
+        List<HexCell> frontier = new List<HexCell>();
+        cell.Distance = 0;
+        frontier.Add(cell);
+        while (frontier.Count > 0)
+        {
+            yield return delay;
+            HexCell current = frontier[0];
+            frontier.RemoveAt(0);
+            frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+            for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
+            {
+                HexCell neighbour = current.GetNeighbour(d);
+
+                if (neighbour == null)
+                {
+                    continue;
+                }
+
+                HexEdgeType edgeType = current.GetEdgeType(neighbour);
+                bool roadThroughEdge = current.HasRoadThroughEdge(d);
+
+
+
+                if (neighbour.IsUnderwater)
+                {
+                    continue;
+                }
+
+                if (edgeType == HexEdgeType.Cliff)
+                {
+                    continue;
+                }
+
+                if (!roadThroughEdge && current.Walled != neighbour.Walled)
+                {
+                    continue;
+                }
+
+
+                int distance = current.Distance;
+                int distanceModifier = 1;
+                // fast travel via roads.
+                if (roadThroughEdge)
+                {
+                    distanceModifier = 1;
+
+                }
+                else
+                {
+                    distanceModifier = edgeType == HexEdgeType.Flat ? 5 : 10;
+                    distanceModifier += neighbour.UrbanDensityLevel;
+                    distanceModifier += neighbour.FarmDensityLevel;
+                    distanceModifier += neighbour.PlantDensityLevel;
+
+                }
+
+                int newDistance = distance + distanceModifier; ;
+
+                if(neighbour.Distance == int.MaxValue)
+                {
+                    neighbour.Distance = newDistance;
+                    frontier.Add(neighbour);
+                }
+                
+                if(newDistance < neighbour.Distance)
+                {
+                    neighbour.Distance = newDistance;
+                }
+
+                frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+
+                
+            }
+
+
+        }
+
+
+        //for (int i = 0; i < m_cells.Length; i++)
+        //{
+        //    yield return delay;
+        //    m_cells[i].Distance = cell.Coordinates.DistanceTo(m_cells[i].Coordinates);
+        //}
+    }
+
     public void Save(BinaryWriter writer)
     {
         for (int i = 0; i < m_cells.Length; i++)
@@ -236,6 +346,7 @@ public class HexGrid : MonoBehaviour
 
     public void Load(BinaryReader reader)
     {
+        StopAllCoroutines();
         for (int i = 0; i < m_cells.Length; i++)
         {
             m_cells[i].Load(reader);

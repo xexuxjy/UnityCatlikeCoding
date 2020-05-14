@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 public class HexCell : MonoBehaviour
 {
@@ -17,6 +17,7 @@ public class HexCell : MonoBehaviour
 
     private HexDirection m_incomingRiverDirection;
     private HexDirection m_outgoingRiverDirection;
+
 
     [SerializeField]
     bool[] m_roads = new bool[6] ;
@@ -480,6 +481,26 @@ public class HexCell : MonoBehaviour
     public bool HasSpecialFeature
     {
         get { return m_specialFeatureIndex > 0; }
+    }
+
+
+    private int m_distance = int.MaxValue;
+    public int Distance
+    {
+        get
+        {
+            return m_distance;
+        }
+        set
+        {
+            m_distance = value;
+            UpdateDistanceLabel();
+        }
+    }
+    void UpdateDistanceLabel()
+    {
+        Text label = UIRectTransform.GetComponent<Text>();
+        label.text = m_distance == int.MaxValue ? "" : m_distance.ToString();
     }
 
 
