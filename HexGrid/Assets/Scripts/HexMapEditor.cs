@@ -32,6 +32,7 @@ public class HexMapEditor : MonoBehaviour
     bool m_applySpecialFeature = true;
 
 
+    int m_defaultSeachSpeed = 24;
     int m_brushSize = 0;
 
     OptionalToggle m_riverMode;
@@ -95,7 +96,7 @@ public class HexMapEditor : MonoBehaviour
 
                 if(m_searchToHexCell)
                 {
-                    HexGrid.FindPathTo(m_searchFromHexCell, m_searchToHexCell);
+                    HexGrid.FindPathTo(m_searchFromHexCell, m_searchToHexCell, m_defaultSeachSpeed);
                 }
 
 
@@ -103,7 +104,7 @@ public class HexMapEditor : MonoBehaviour
             else if(m_searchFromHexCell && m_searchFromHexCell != currentHexCell )
             {
                 m_searchToHexCell = currentHexCell;
-                HexGrid.FindPathTo(m_searchFromHexCell,m_searchToHexCell);
+                HexGrid.FindPathTo(m_searchFromHexCell,m_searchToHexCell, m_defaultSeachSpeed);
             }
 
             m_previousHexCell = currentHexCell;

@@ -495,9 +495,18 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
         set
         {
             m_distance = value;
-            UpdateDistanceLabel();
+            //UpdateDistanceLabel();
         }
     }
+
+    public void SetLabel(String text)
+    {
+        Text label = UIRectTransform.GetComponent<Text>();
+        label.text = text;
+
+    }
+
+
     void UpdateDistanceLabel()
     {
         Text label = UIRectTransform.GetComponent<Text>();
@@ -590,5 +599,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
             return Distance + SearchHeuristic;
         }
     }
+
+    public int SearchPhase { get; set; }
 
 }
