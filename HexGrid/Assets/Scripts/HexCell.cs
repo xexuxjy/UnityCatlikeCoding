@@ -1,11 +1,12 @@
-﻿using System;
+﻿using C5;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HexCell : MonoBehaviour
+public class HexCell : MonoBehaviour , IComparable<HexCell>
 {
     public HexCoordinates Coordinates;
     public RectTransform UIRectTransform;
@@ -548,6 +549,46 @@ public class HexCell : MonoBehaviour
 
 
 
+    }
+
+    public void DisableHighlight()
+    {
+        Image highlight = UIRectTransform.GetChild(0).GetComponent<Image>();
+        highlight.gameObject.SetActive(false);
+    }
+
+    public void EnableHighlight()
+    {
+        Image highlight = UIRectTransform.GetChild(0).GetComponent<Image>();
+        highlight.gameObject.SetActive(true);
+    }
+
+    public void EnableHighlight(Color color)
+    {
+        Image highlight = UIRectTransform.GetChild(0).GetComponent<Image>();
+        highlight.color = color;
+        highlight.gameObject.SetActive(true);
+    }
+
+    public int CompareTo(HexCell other)
+    {
+        if(other != null)
+        {
+            return SearchPriority.CompareTo(other.SearchPriority);
+        }
+        return 0;
+    }
+
+    public HexCell PathFrom { get; set; }
+
+    public int SearchHeuristic { get; set; }
+
+    public int SearchPriority
+    {
+        get
+        {
+            return Distance + SearchHeuristic;
+        }
     }
 
 }

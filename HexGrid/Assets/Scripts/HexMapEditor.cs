@@ -42,6 +42,10 @@ public class HexMapEditor : MonoBehaviour
     HexDirection m_dragDirection;
     HexCell m_previousHexCell;
 
+    HexCell m_searchFromHexCell;
+    HexCell m_searchToHexCell;
+
+
 
     void Awake()
     {
@@ -66,10 +70,10 @@ public class HexMapEditor : MonoBehaviour
         RaycastHit hit;
         if (Physics.Raycast(inputRay, out hit))
         {
-            HexCell hexCell = HexGrid.GetCell(hit.point);
-            if (m_previousHexCell && m_previousHexCell != hexCell)
+            HexCell currentHexCell = HexGrid.GetCell(hit.point);
+            if (m_previousHexCell && m_previousHexCell != currentHexCell)
             {
-                ValidateDrag(hexCell);
+                ValidateDrag(currentHexCell);
             }
             else
             {
@@ -78,14 +82,31 @@ public class HexMapEditor : MonoBehaviour
 
             if (m_editMode)
             { 
-                EditCells(hexCell);
+                EditCells(currentHexCell);
             }
-            else
+            else if(Input.GetKey(KeyCode.LeftShift))
             {
-                HexGrid.FindDistancesTo(hexCell);
+                if(m_searchFromHexCell)
+                {
+                    m_searchFromHexCell.DisableHighlight();
+                }
+                m_searchFromHexCell = currentHexCell;
+                m_searchFromHexCell.EnableHighlight(Color.blue);
+
+                if(m_searchToHexCell)
+                {
+                    HexGrid.FindPathTo(m_searchFromHexCell, m_searchToHexCell);
+                }
+
+
+            }
+            else if(m_searchFromHexCell && m_searchFromHexCell != currentHexCell )
+            {
+                m_searchToHexCell = currentHexCell;
+                HexGrid.FindPathTo(m_searchFromHexCell,m_searchToHexCell);
             }
 
-            m_previousHexCell = hexCell;
+            m_previousHexCell = currentHexCell;
         }
         else
         {

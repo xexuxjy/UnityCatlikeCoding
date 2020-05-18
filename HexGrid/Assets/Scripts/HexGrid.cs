@@ -33,6 +33,8 @@ public class HexGrid : MonoBehaviour
     HexCell[] m_cells;
     HexGridChunk[] m_gridChunks;
 
+    HexCellPriorityQueue m_searchQueue;
+
 
     void Awake()
     {
@@ -235,31 +237,53 @@ public class HexGrid : MonoBehaviour
     //    }
     //}
 
-    public void FindDistancesTo(HexCell cell)
+    public void FindPathTo(HexCell fromCell,HexCell toCell)
     {
         StopAllCoroutines();
-        StartCoroutine(Search(cell));
+        StartCoroutine(Search(fromCell,toCell));
     }
 
-    IEnumerator Search(HexCell cell)
+
+    IEnumerator Search(HexCell fromCell,HexCell toCell)
     {
+        if(m_searchQueue == null)
+        {
+            m_searchQueue = new HexCellPriorityQueue();
+        }
+        else 
+        {
+            m_searchQueue.Clear();
+        }
+
         for (int i = 0; i < m_cells.Length; i++)
         {
             m_cells[i].Distance = int.MaxValue;
+            m_cells[i].DisableHighlight();
         }
 
+        fromCell.EnableHighlight(Color.blue);
+        toCell.EnableHighlight(Color.red);
 
         WaitForSeconds delay = new WaitForSeconds(1 / 60f);
 
-        List<HexCell> frontier = new List<HexCell>();
-        cell.Distance = 0;
-        frontier.Add(cell);
-        while (frontier.Count > 0)
+        fromCell.Distance = 0;
+        m_searchQueue.Enqueue(fromCell);
+        while (m_searchQueue.Count > 0)
         {
             yield return delay;
-            HexCell current = frontier[0];
-            frontier.RemoveAt(0);
-            frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
+            HexCell current = m_searchQueue.Dequeue();
+
+            if(current == toCell)
+            {
+                current = current.PathFrom;
+                while (current != fromCell)
+                {
+                    current.EnableHighlight(Color.white);
+                    current = current.PathFrom;
+                }
+                break;
+            }
+
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
                 HexCell neighbour = current.GetNeighbour(d);
@@ -312,15 +336,17 @@ public class HexGrid : MonoBehaviour
                 if(neighbour.Distance == int.MaxValue)
                 {
                     neighbour.Distance = newDistance;
-                    frontier.Add(neighbour);
+                    neighbour.PathFrom = current;
+                    neighbour.SearchHeuristic = neighbour.Coordinates.DistanceTo(toCell.Coordinates);
+                    m_searchQueue.Enqueue(neighbour);
                 }
                 
                 if(newDistance < neighbour.Distance)
                 {
                     neighbour.Distance = newDistance;
+                    neighbour.PathFrom = current;
+                    m_searchQueue.Change(neighbour);
                 }
-
-                frontier.Sort((x, y) => x.Distance.CompareTo(y.Distance));
 
                 
             }
