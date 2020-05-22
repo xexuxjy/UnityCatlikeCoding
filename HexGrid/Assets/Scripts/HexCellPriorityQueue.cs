@@ -8,12 +8,6 @@ public class HexCellPriorityQueue
 	public void Enqueue(HexCell cell)
 	{
 		IPriorityQueueHandle<HexCell> handle = null;
-
-		if(m_handleMap.ContainsKey(cell))
-		{
-			int ibreak = 0;
-		}
-
 		m_heap.Add(ref handle, cell);
 		m_handleMap.Add(cell, handle);
 	}

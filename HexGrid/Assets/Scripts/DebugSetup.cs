@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class DebugSetup : MonoBehaviour
 {
+    public HexMapEditor HexMapEditor;
+
     public int TerrainIterations = 50;
     public int UrbanFeatureIterations = 50;
     public int NumRivers = 4;
@@ -22,7 +24,7 @@ public class DebugSetup : MonoBehaviour
     bool m_haveBuilt = false;
     private void Update()
     {
-        HexMapEditor mapEditor = GameObject.FindObjectOfType<HexMapEditor>();
+        HexMapEditor mapEditor = HexMapEditor;
         if (mapEditor != null && !m_haveBuilt)
         {
             for (int i = 0; i < TerrainIterations; ++i)

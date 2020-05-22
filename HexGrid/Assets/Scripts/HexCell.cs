@@ -140,6 +140,10 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     private void RefreshSelfOnly()
     {
         GridChunk.Refresh();
+        if(HexUnit != null)
+        {
+            HexUnit.ValidateLocation();
+        }
     }
 
 
@@ -233,6 +237,11 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
         if (GridChunk != null)
         {
             GridChunk.Refresh();
+            if (HexUnit != null)
+            {
+                HexUnit.ValidateLocation();
+            }
+
         }
     }
 
@@ -587,9 +596,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
         }
         return 0;
     }
-
-    public HexCell PathFrom { get; set; }
-
+    
     public int SearchHeuristic { get; set; }
 
     public int SearchPriority
@@ -600,6 +607,14 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
         }
     }
 
+    public HexUnit HexUnit
+    { get; set; }
+
     public int SearchPhase { get; set; }
+
+    public override string ToString()
+    {
+        return Coordinates.ToString();
+    }
 
 }

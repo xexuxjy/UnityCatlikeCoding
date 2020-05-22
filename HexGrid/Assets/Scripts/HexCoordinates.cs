@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -79,6 +80,20 @@ public struct HexCoordinates
         return ((X < other.X ? other.X - X : X - other.X) +
             (Y < other.Y ? other.Y - Y : Y - other.Y) +
             (Z < other.Z ? other.Z - Z : Z - other.Z)) / 2;
+    }
+
+    public void Save(BinaryWriter writer)
+    {
+        writer.Write(X);
+        writer.Write(Z);
+    }
+
+    public static HexCoordinates Load(BinaryReader reader)
+    {
+        HexCoordinates c = new HexCoordinates();
+        c.X = reader.ReadInt32();
+        c.Z = reader.ReadInt32();
+        return c;
     }
 
 }

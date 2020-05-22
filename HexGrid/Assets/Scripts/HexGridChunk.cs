@@ -975,7 +975,7 @@ public class HexGridChunk : MonoBehaviour
 
             Vector3 offset = HexMetrics.GetSolidEdgeMiddle(middle);
             roadCenter += offset * 0.25f;
-            if (dir == middle && cell.HasRoadThroughEdge(dir.Opposite()));
+            if (dir == middle && cell.HasRoadThroughEdge(dir.Opposite()))
             {
                 FeatureManager.AddBridge(roadCenter, center - offset * (HexMetrics.InnerToOuter * 0.7f));
             }

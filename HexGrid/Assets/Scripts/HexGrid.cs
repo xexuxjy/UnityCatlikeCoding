@@ -25,6 +25,7 @@ public class HexGrid : MonoBehaviour
 
     public HexCell HexCellPrefab;
     public HexGridChunk HexGridChunkPrefab;
+    public HexUnit HexUnitPrefab;
 
     public Text HexLabelPrefab;
 
@@ -33,15 +34,20 @@ public class HexGrid : MonoBehaviour
     HexCell[] m_cells;
     HexGridChunk[] m_gridChunks;
 
-    HexCellPriorityQueue m_searchQueue;
+    HexCell m_currentPathFrom;
+    HexCell m_currentPathTo;
 
+    HexCellPriorityQueue m_searchQueue = new HexCellPriorityQueue();
     int m_searchFrontierPhase;
 
+
+    List<HexUnit> m_unitsList = new List<HexUnit>();
 
     void Awake()
     {
         HexMetrics.NoiseSource = NoiseSource;
         HexMetrics.InitialiseHashGrid(Seed);
+        HexUnit.UnitPrefab = HexUnitPrefab;
 
         CreateMap(CellCountX,CellCountZ);
 
@@ -49,6 +55,9 @@ public class HexGrid : MonoBehaviour
 
     public void CreateMap(int x,int z)
     {
+        ClearPath();
+        ClearUnits();
+
         if (x <= 0 || x % HexMetrics.ChunkSizeX != 0 ||z <= 0 || z % HexMetrics.ChunkSizeZ != 0)
         {
             Debug.LogError("Unsupported map size.");
@@ -69,6 +78,7 @@ public class HexGrid : MonoBehaviour
         m_chunkCountX = CellCountX / HexMetrics.ChunkSizeX;
         m_chunkCountZ = CellCountZ / HexMetrics.ChunkSizeZ;
 
+        ClearUnits();
 
         CreateChunks();
         CreateCells();
@@ -122,7 +132,17 @@ public class HexGrid : MonoBehaviour
         return cell;
     }
 
-    public  HexCell GetCell(HexCoordinates coordinates)
+    public HexCell GetCell(Ray ray)
+    {
+        RaycastHit hit;
+        if (Physics.Raycast(ray, out hit))
+        {
+            return GetCell(hit.point);
+        }
+        return null;
+    }
+
+    public HexCell GetCell(HexCoordinates coordinates)
     {
         int cellIndex = coordinates.X + (coordinates.Z * CellCountX) + (coordinates.Z / 2);
         if (cellIndex >= 0 && cellIndex < m_cells.Length)
@@ -153,18 +173,11 @@ public class HexGrid : MonoBehaviour
 
 
         HexCell hexCell = Instantiate(HexCellPrefab);
-        //hexCell.transform.SetParent(transform);
         hexCell.transform.localPosition = position;
         hexCell.Coordinates = HexCoordinates.FromOffsetCoordinates(x, z);
-        
-        //hexCell.Color = DefaultColor;
-
 
         Text label = Instantiate(HexLabelPrefab);
-        //label.rectTransform.SetParent(GridCanvas.transform,false);
         label.rectTransform.anchoredPosition = new Vector3(position.x, position.z);
-        
-        //label.text = hexCell.Coordinates.ToStringSeparateLines();
 
         hexCell.UIRectTransform = label.rectTransform;
 
@@ -231,66 +244,47 @@ public class HexGrid : MonoBehaviour
         }
     }
 
-    //public void FindDistancesTo(HexCell cell)
-    //{
-    //    for (int i = 0; i < m_cells.Length; i++)
-    //    {
-    //        m_cells[i].Distance = cell.Coordinates.DistanceTo(m_cells[i].Coordinates);
-    //    }
-    //}
-
-    public void FindPathTo(HexCell fromCell,HexCell toCell,int speed)
+    public void FindPathTo(HexCell fromCell,HexCell toCell,int speed, List<HexCell> results)
     {
         //StopAllCoroutines();
         //StartCoroutine(Search(fromCell,toCell,speed));
-        Search(fromCell, toCell, speed);
+        Search(fromCell, toCell, speed,results);
     }
 
 
-    void Search(HexCell fromCell,HexCell toCell,int speed)
+    void Search(HexCell fromCell,HexCell toCell,int speed,List<HexCell> results)
     {
+        m_currentPathFrom = fromCell;
+        m_currentPathTo = toCell;
+
         m_searchFrontierPhase = 2;
-        if (m_searchQueue == null)
-        {
-            m_searchQueue = new HexCellPriorityQueue();
-        }
-        else 
-        {
-            m_searchQueue.Clear();
-        }
+        ClearPath();
 
         for (int i = 0; i < m_cells.Length; i++)
         {
-            //m_cells[i].Distance = int.MaxValue;
             m_cells[i].SetLabel(null);
             m_cells[i].DisableHighlight();
             m_cells[i].SearchPhase = 0;
         }
 
-        fromCell.EnableHighlight(Color.blue);
-        
-
         WaitForSeconds delay = new WaitForSeconds(1 / 60f);
 
         fromCell.Distance = 0;
+        fromCell.SearchPhase = m_searchFrontierPhase;
         m_searchQueue.Enqueue(fromCell);
         while (m_searchQueue.Count > 0)
         {
-            //yield return delay;
+            //yield return delay;s
             HexCell current = m_searchQueue.Dequeue();
             current.SearchPhase += 1;
 
             if(current == toCell)
             {
-                //current = current.PathFrom;
-                while (current != fromCell)
+                BuildFinalPath(fromCell, toCell);
+                if(results != null && m_finalPath.Count > 0)
                 {
-                    current.EnableHighlight(Color.white);
-                    int turn = current.Distance / speed;
-                    current.SetLabel(turn.ToString());
-                    current = current.PathFrom;
+                    results.AddRange(m_finalPath);
                 }
-                toCell.EnableHighlight(Color.red);
                 break;
             }
 
@@ -354,23 +348,18 @@ public class HexGrid : MonoBehaviour
                 }
 
 
-                //if (neighbour.Distance == int.MaxValue)
                 if(neighbour.SearchPhase < m_searchFrontierPhase)
                 {
                     neighbour.SearchPhase = m_searchFrontierPhase;
-
                     neighbour.Distance = newDistance;
-                    //neighbour.SetLabel(turn.ToString());
-                    neighbour.PathFrom = current;
+                    SetPathCurrentNext(current,neighbour);
                     neighbour.SearchHeuristic = neighbour.Coordinates.DistanceTo(toCell.Coordinates);
                     m_searchQueue.Enqueue(neighbour);
                 }
-                
-                if(newDistance < neighbour.Distance)
+                else if(newDistance < neighbour.Distance)
                 {
                     neighbour.Distance = newDistance;
-                    //neighbour.SetLabel(turn.ToString());
-                    neighbour.PathFrom = current;
+                    SetPathCurrentNext(current, neighbour);
                     m_searchQueue.Change(neighbour);
                 }
 
@@ -388,17 +377,89 @@ public class HexGrid : MonoBehaviour
         //}
     }
 
+
+
+    /// <summary>
+    /// Generates the path from start to end.
+    /// </summary>
+    /// <returns>The path from start to end</returns>
+    LinkedList<HexCell> m_finalPath= new LinkedList<HexCell>();
+    private void BuildFinalPath(HexCell startPoint,HexCell endPoint)
+    {
+        HexCell curPrev = endPoint;
+        m_finalPath.AddFirst(curPrev);
+        while (m_finalPathDictionary.ContainsKey(curPrev))
+        {
+            curPrev = m_finalPathDictionary[curPrev];
+            m_finalPath.AddFirst(curPrev);
+        }
+
+    }
+
+    Dictionary<HexCell, HexCell> m_finalPathDictionary = new Dictionary<HexCell, HexCell>();
+    public void SetPathCurrentNext(HexCell current,HexCell next)
+    {
+        m_finalPathDictionary[next] = current;
+    }
+
+
+    public void ClearPath()
+    {
+        m_searchQueue.Clear();
+        foreach (HexCell hexCell in m_finalPath)
+        { 
+            hexCell.SetLabel(null);
+            hexCell.DisableHighlight();
+        }
+        m_finalPath.Clear();
+        m_finalPathDictionary.Clear();
+
+    }
+
+    public void AddUnit(HexUnit unit, HexCell location, float orientation)
+    {
+        m_unitsList.Add(unit);
+        unit.transform.SetParent(transform, false);
+        unit.Location = location;
+        unit.Orientation = orientation;
+    }
+
+    public void RemoveUnit(HexUnit unit)
+    {
+        m_unitsList.Remove(unit);
+        unit.Die();
+    }
+
+
+    void ClearUnits()
+    {
+        foreach(HexUnit unit in m_unitsList)
+        {
+            RemoveUnit(unit);
+        }
+        m_unitsList.Clear();
+    }
+
     public void Save(BinaryWriter writer)
     {
         for (int i = 0; i < m_cells.Length; i++)
         {
             m_cells[i].Save(writer);
         }
+
+        writer.Write(m_unitsList.Count);
+        foreach (HexUnit unit in m_unitsList)
+        {
+            unit.Save(writer);
+        }
+
     }
 
     public void Load(BinaryReader reader)
     {
-        //StopAllCoroutines();
+        ClearPath();
+        ClearUnits();
+
         for (int i = 0; i < m_cells.Length; i++)
         {
             m_cells[i].Load(reader);
@@ -407,7 +468,15 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < m_gridChunks.Length; i++)
         {
             m_gridChunks[i].Refresh();
+        }   
+
+
+        int unitCount = reader.ReadInt32();
+        for (int i = 0; i < unitCount; i++)
+        {
+            HexUnit.Load(reader, this);
         }
+
 
     }
 
