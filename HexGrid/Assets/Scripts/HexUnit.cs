@@ -15,6 +15,11 @@ public class HexUnit : MonoBehaviour
 		}
 		set
 		{
+			if(m_location != null)
+			{
+				m_location.HexUnit = null;
+			}
+
 			m_location = value;
 			transform.localPosition = value.Position;
 			value.HexUnit = this;
@@ -58,5 +63,11 @@ public class HexUnit : MonoBehaviour
 		float orientation = reader.ReadSingle();
 		hexGrid.AddUnit(Instantiate(UnitPrefab), hexGrid.GetCell(coordinates), orientation);
 	}
+
+	public bool IsValidDestination(HexCell cell)
+	{
+		return !cell.IsUnderwater && !cell.HexUnit;
+	}
+
 
 }

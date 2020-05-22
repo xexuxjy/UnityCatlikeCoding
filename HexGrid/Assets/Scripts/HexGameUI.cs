@@ -17,6 +17,10 @@ public class HexGameUI : MonoBehaviour
 			{
 				DoSelection();
 			}
+			else if(Input.GetMouseButtonDown(1))
+			{
+				DoMove();
+			}
 			else if (m_selectedUnit != null)
 			{
 				DoPathfinding();
@@ -55,7 +59,7 @@ public class HexGameUI : MonoBehaviour
 	{
 		if(UpdateCurrentCell())
 		{
-			if(m_currentCell != null)
+			if(m_currentCell != null && m_selectedUnit.IsValidDestination(m_currentCell))
 			{
 				int speed = 24;
 				List<HexCell> results = new List<HexCell>();
@@ -88,6 +92,16 @@ public class HexGameUI : MonoBehaviour
 
 
 		}
-
 	}
+
+	void DoMove()
+	{
+		if(HexGrid.HasValidPath)
+		{
+			m_selectedUnit.Location = m_currentCell;
+			HexGrid.ClearPath();
+		}
+	}
+
+
 }

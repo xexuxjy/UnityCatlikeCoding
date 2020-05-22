@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using JetBrains.Annotations;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -304,7 +305,7 @@ public class HexGrid : MonoBehaviour
 
 
 
-                if (neighbour.IsUnderwater)
+                if (neighbour.IsUnderwater ||neighbour.HexUnit != null)
                 {
                     continue;
                 }
@@ -476,8 +477,11 @@ public class HexGrid : MonoBehaviour
         {
             HexUnit.Load(reader, this);
         }
+    }
 
-
+    public bool HasValidPath
+    {
+        get { return m_finalPath.Count > 0; }
     }
 
 }
