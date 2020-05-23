@@ -289,7 +289,7 @@ public class HexGrid : MonoBehaviour
                 break;
             }
 
-            int currentTurn = current.Distance / speed;
+            int currentTurn = (current.Distance -1) / speed;
 
             for (HexDirection d = HexDirection.NE; d <= HexDirection.NW; d++)
             {
@@ -342,7 +342,7 @@ public class HexGrid : MonoBehaviour
 
                 int newDistance = distance + moveCost;
 
-                int turn = newDistance / speed;
+                int turn = (newDistance -1) / speed;
                 if(turn > currentTurn)
                 {
                     newDistance = (turn * speed) + moveCost;

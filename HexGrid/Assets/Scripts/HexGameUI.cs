@@ -55,22 +55,32 @@ public class HexGameUI : MonoBehaviour
 		}
 	}
 
+	List<HexCell> m_pathFindingResults = new List<HexCell>();
+
 	void DoPathfinding()
 	{
 		if(UpdateCurrentCell())
 		{
 			if(m_currentCell != null && m_selectedUnit.IsValidDestination(m_currentCell))
 			{
+				ClearPaths();
 				int speed = 24;
-				List<HexCell> results = new List<HexCell>();
-				HexGrid.FindPathTo(m_selectedUnit.Location, m_currentCell, speed,results);
-				DrawStartEndPath(results, speed);
+				HexGrid.FindPathTo(m_selectedUnit.Location, m_currentCell, speed, m_pathFindingResults);
+				DrawStartEndPath(m_pathFindingResults, speed);
+				m_selectedUnit.CopyPath(m_pathFindingResults);
+				//m_selectedUnit.Travel();
 			}
 			else
 			{
-				HexGrid.ClearPath();
+				ClearPaths();
 			}
 		}
+	}
+
+	private void ClearPaths()
+	{
+		HexGrid.ClearPath();
+		m_pathFindingResults.Clear();
 	}
 
 	public void DrawStartEndPath(List<HexCell> path,int speed)
@@ -87,7 +97,7 @@ public class HexGameUI : MonoBehaviour
 				color = Color.red;
 			}
 			path[i].EnableHighlight(color);
-			int turn = path[i].Distance / speed;
+			int turn = (path[i].Distance -1)/ speed;
 			path[i].SetLabel(turn.ToString());
 
 
@@ -98,10 +108,46 @@ public class HexGameUI : MonoBehaviour
 	{
 		if(HexGrid.HasValidPath)
 		{
-			m_selectedUnit.Location = m_currentCell;
-			HexGrid.ClearPath();
+			m_selectedUnit.Travel();
+			ClearPaths();
+			m_selectedUnit = null;
 		}
 	}
 
+	//public void OnDrawGizmos()
+	//{
+	//	if(m_pathFindingResults.Count > 0)
+	//	{
+	//		Vector3 a = m_pathFindingResults[0].Position;
+	//		Vector3 b = a;
+	//		Vector3 c = a;
+			
+	//		for (int i=1;i<m_pathFindingResults.Count;++i)
+	//		{
+	//			a = c;
+	//			b = m_pathFindingResults[i - 1].Position;
+	//			c = (b + m_pathFindingResults[i].Position) * 0.5f;
+	//			DrawStep(a, b,c);
+	//		}
+
+	//		a = c;
+	//		b = m_pathFindingResults[m_pathFindingResults.Count - 1].Position;
+	//		c = b;
+	//		DrawStep(a, b,c);
+
+	//	}
+	//}
+
+	//private void DrawStep(Vector3 a,Vector3 b,Vector3 c)
+	//{
+	//	float step = 0.1f;
+	//	float count = 0;
+	//	while (count <= 1f)
+	//	{
+	//		Vector3 position = Bezier.GetPoint(a, b, c, count);
+	//		count += step;
+	//		Gizmos.DrawSphere(position, 2f);
+	//	}
+	//}
 
 }
