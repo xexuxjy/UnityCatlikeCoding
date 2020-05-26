@@ -158,7 +158,8 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
                 return;
             }
             m_terrainTypeIndex = value;
-            Refresh();
+            //Refresh();
+            HexCellDataShader.RefreshTerrain(this);
         }
     }
 
@@ -542,6 +543,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
             m_roads[i] = binReader.ReadBoolean();
         }
 
+        HexCellDataShader.RefreshTerrain(this);
         RefreshPosition();
 
     }
@@ -616,5 +618,13 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     {
         return Coordinates.ToString();
     }
+
+    public HexCellDataShader HexCellDataShader
+    {
+        get; set;
+    }
+
+    public int CellIndex
+    { get; set; }
 
 }

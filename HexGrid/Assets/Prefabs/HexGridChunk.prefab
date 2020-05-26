@@ -95,10 +95,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 0
-  UseColours: 0
   UseUVs: 1
   UseUV2s: 0
-  UseTerrainTypes: 0
+  UseCellData: 0
 --- !u!1 &442110983
 GameObject:
   m_ObjectHideFlags: 0
@@ -194,10 +193,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 0
-  UseColours: 0
   UseUVs: 0
   UseUV2s: 0
-  UseTerrainTypes: 0
+  UseCellData: 0
 --- !u!1 &647373629
 GameObject:
   m_ObjectHideFlags: 0
@@ -293,10 +291,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 0
-  UseColours: 0
   UseUVs: 1
   UseUV2s: 0
-  UseTerrainTypes: 0
+  UseCellData: 0
 --- !u!1 &1735534716
 GameObject:
   m_ObjectHideFlags: 0
@@ -392,10 +389,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 0
-  UseColours: 0
   UseUVs: 1
   UseUV2s: 0
-  UseTerrainTypes: 0
+  UseCellData: 0
 --- !u!1 &2003556033
 GameObject:
   m_ObjectHideFlags: 0
@@ -491,10 +487,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 0
-  UseColours: 0
   UseUVs: 1
   UseUV2s: 1
-  UseTerrainTypes: 0
+  UseCellData: 0
 --- !u!1 &2038000925
 GameObject:
   m_ObjectHideFlags: 0
@@ -813,10 +808,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 1
-  UseColours: 1
   UseUVs: 0
   UseUV2s: 0
-  UseTerrainTypes: 1
+  UseCellData: 1
 --- !u!1 &8016727840258676160
 GameObject:
   m_ObjectHideFlags: 0
@@ -912,7 +906,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 0
-  UseColours: 0
   UseUVs: 0
   UseUV2s: 0
-  UseTerrainTypes: 0
+  UseCellData: 0

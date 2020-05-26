@@ -2,25 +2,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class HexMesh : MonoBehaviour, IHexMeshChunkModule
 {
     public bool UseCollider;
-    public bool UseColours;
     public bool UseUVs;
     public bool UseUV2s;
-    public bool UseTerrainTypes;
+    public bool UseCellData;
 
     Mesh m_hexMesh;
     MeshCollider m_meshCollider;
 
     [NonSerialized] List<Vector3> m_vertices;
     [NonSerialized] List<int> m_indices;
-    [NonSerialized] List<Color> m_colors;
+    [NonSerialized] List<Color> m_cellWeights;
     [NonSerialized] List<Vector2> m_uvs;
     [NonSerialized] List<Vector2> m_uv2s;
-    [NonSerialized] List<Vector3> m_terrainTypes;
+    [NonSerialized] List<Vector3> m_cellIndices;
 
     private void Awake()
     {
@@ -36,9 +36,10 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
     {
         m_hexMesh.Clear();
         m_vertices = ListPool<Vector3>.Get();
-        if (UseColours)
+        if (UseCellData)
         {
-            m_colors = ListPool<Color>.Get();
+            m_cellWeights = ListPool<Color>.Get();
+            m_cellIndices = ListPool<Vector3>.Get();
         }
         m_indices = ListPool<int>.Get();
 
@@ -50,10 +51,6 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
         {
             m_uv2s = ListPool<Vector2>.Get();
         }
-        if (UseTerrainTypes)
-        {
-            m_terrainTypes = ListPool<Vector3>.Get();
-        }
 
     }
 
@@ -62,10 +59,12 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
         m_hexMesh.SetVertices(m_vertices);
         ListPool<Vector3>.Return(m_vertices);
 
-        if (m_colors != null)
+        if (m_cellWeights != null)
         {
-            m_hexMesh.SetColors(m_colors);
-            ListPool<Color>.Return(m_colors);
+            m_hexMesh.SetColors(m_cellWeights);
+            ListPool<Color>.Return(m_cellWeights);
+            m_hexMesh.SetUVs(2, m_cellIndices);
+            ListPool<Vector3>.Return (m_cellIndices);
         }
 
         m_hexMesh.SetTriangles(m_indices, 0);
@@ -84,11 +83,6 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
             ListPool<Vector2>.Return(m_uv2s);
         }
 
-        if (UseTerrainTypes)
-        {
-            m_hexMesh.SetUVs(2, m_terrainTypes);
-            ListPool<Vector3>.Return(m_terrainTypes);
-        }
 
         if (m_meshCollider)
         {
@@ -121,27 +115,30 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
         m_indices.Add(vertexIndex + 2);
     }
 
-
-    public void AddTriangleColor(Color c1)
+    public void AddTriangleCellData(Vector3 indices, Color color)
     {
-        if (m_colors != null)
+        AddTriangleCellData(indices, color, color, color);
+
+    }
+
+    public void AddTriangleCellData(Vector3 indices,Color weights1,Color weights2,Color weights3)
+    {
+        if(m_cellIndices != null)
         {
-            m_colors.Add(c1);
-            m_colors.Add(c1);
-            m_colors.Add(c1);
+            m_cellIndices.Add(indices);
+            m_cellIndices.Add(indices);
+            m_cellIndices.Add(indices);
+        }
+        
+        if (m_cellWeights != null)
+        {
+            m_cellWeights.Add(weights1);
+            m_cellWeights.Add(weights2);
+            m_cellWeights.Add(weights3);
         }
     }
 
 
-    public void AddTriangleColor(Color c1, Color c2, Color c3)
-    {
-        if (m_colors != null)
-        {
-            m_colors.Add(c1);
-            m_colors.Add(c2);
-            m_colors.Add(c3);
-        }
-    }
 
     public void AddTriangleUV(Vector2 v1, Vector2 v2, Vector2 v3)
     {
@@ -208,37 +205,32 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
     }
 
 
-    public void AddQuadColor(Color c1, Color c2, Color c3, Color c4)
+    public void AddQuadCellData(Vector3 indices,Color c1)
     {
-        if (m_colors != null)
-        {
-            m_colors.Add(c1);
-            m_colors.Add(c2);
-            m_colors.Add(c3);
-            m_colors.Add(c4);
-        }
+        AddQuadCellData(indices, c1, c1, c1, c1);
     }
 
-    public void AddQuadColor(Color c1, Color c2)
+    public void AddQuadCellData(Vector3 indices, Color c1, Color c2)
     {
-        if (m_colors != null)
-        {
-            m_colors.Add(c1);
-            m_colors.Add(c1);
-            m_colors.Add(c2);
-            m_colors.Add(c2);
-        }
+        AddQuadCellData(indices, c1, c1, c2, c2);
     }
 
-    public void AddQuadColor(Color c1)
+    public void AddQuadCellData(Vector3 indices,Color c1, Color c2, Color c3, Color c4)
     {
-        if (m_colors != null)
+        if (m_cellIndices != null)
         {
+            m_cellIndices.Add(indices);
+            m_cellIndices.Add(indices);
+            m_cellIndices.Add(indices);
+            m_cellIndices.Add(indices);
+        }
 
-            m_colors.Add(c1);
-            m_colors.Add(c1);
-            m_colors.Add(c1);
-            m_colors.Add(c1);
+        if (m_cellWeights != null)
+        {
+            m_cellWeights.Add(c1);
+            m_cellWeights.Add(c2);
+            m_cellWeights.Add(c3);
+            m_cellWeights.Add(c4);
         }
     }
 
@@ -263,20 +255,5 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
         m_uv2s.Add(new Vector2(uMax, vMin));
         m_uv2s.Add(new Vector2(uMin, vMax));
         m_uv2s.Add(new Vector2(uMax, vMax));
-    }
-
-
-    public void AddTriangleTerrainTypes(Vector3 types)
-    {
-        m_terrainTypes.Add(types);
-        m_terrainTypes.Add(types);
-        m_terrainTypes.Add(types);
-    }
-    public void AddQuadTerrainTypes(Vector3 types)
-    {
-        m_terrainTypes.Add(types);
-        m_terrainTypes.Add(types);
-        m_terrainTypes.Add(types);
-        m_terrainTypes.Add(types);
     }
 }
