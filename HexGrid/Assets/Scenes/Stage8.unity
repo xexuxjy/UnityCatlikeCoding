@@ -9212,6 +9212,69 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 359502499, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: UseUVs
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 647373631, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: UseUVs
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1735534717, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: UseUVs
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2003556034, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: UseUVs
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2003556034, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: UseUV2s
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2038000926, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: UrbanFeatureCollections.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2038000926, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: FarmFeatureCollections.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2038000926, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: PlantFeatureCollections.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2038000926, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: SpecialFeatures.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2038000926, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: Walls
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2038000926, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: WallTower
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2038000926, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
+      propertyPath: Bridge
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695290110854888276, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: UseCollider
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695290110854888276, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: UseColours
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2695290110854888276, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: UseTerrainTypes
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4610533347264430654, guid: 07bf225cbdaa851448566ddae0862bb9,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -9271,6 +9334,46 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: HexGridChunk
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767001932767624532, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: Terrain
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767001932767624532, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: Rivers
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767001932767624532, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: Roads
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767001932767624532, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: Water
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767001932767624532, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: WaterShore
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767001932767624532, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: Estuaries
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767001932767624532, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: Walls
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 5767001932767624532, guid: 07bf225cbdaa851448566ddae0862bb9,
+        type: 3}
+      propertyPath: FeatureManager
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 07bf225cbdaa851448566ddae0862bb9, type: 3}
