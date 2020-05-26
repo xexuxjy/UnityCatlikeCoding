@@ -25,12 +25,16 @@
         // Use shader model 3.0 target, to get nicer looking lighting
         #pragma target 3.0
 
+        #include "HexCellData.cginc"
+
+
         sampler2D _MainTex;
 
         struct Input
         {
             float2 uv_MainTex;
 			float3 worldPos;
+            float visibility;
         };
 
         half _Glossiness;
@@ -44,13 +48,24 @@
             // put more per-instance properties here
         UNITY_INSTANCING_BUFFER_END(Props)
 
+        void vert(inout appdata_full v,out Input data)
+        {
+            UNITY_INITIALIZE_OUTPUT(Input,data);
+            float4 cell0 = GetCellData(v,0);
+            float4 cell1 = GetCellData(v,0);
+
+            data.visibility = cell0.x * v.color.x + cell1.x *v.color.y;
+            data.visibilty = VisibilitLerplerp(data.visibilty);
+
+		}
+
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
 
 			float4 noise = tex2D(_MainTex, IN.worldPos.xz * 0.025f);
             // Albedo comes from a texture tinted by color
             //fixed4 c = fixed4(IN.uv_MainTex, 1, 1);
-			fixed4 c = _Color * (noise.y * 0.75f + 0.25f);
+			fixed4 c = _Color * (noise.y * 0.75f + 0.25f) * IN.visibility;
 			float4 blend = IN.uv_MainTex.x;
 			blend += noise.x + 0.5f;
 

@@ -128,6 +128,11 @@ public class HexMapEditor : MonoBehaviour
     void CreateUnit()
     {
         HexCell cell = GetCellUnderCursor();
+        CreateUnit(cell);
+    }
+    public void CreateUnit(HexCell cell)
+    {
+        
         if (cell && cell.HexUnit == null)
         {
             HexUnit unit = Instantiate(HexUnit.UnitPrefab);

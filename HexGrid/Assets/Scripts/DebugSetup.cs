@@ -17,6 +17,8 @@ public class DebugSetup : MonoBehaviour
 
     public int NumSpecials = 100;
 
+    public int NumUnits = 1;
+
     public bool Rivers;
     public bool Roads;
     public bool Water;
@@ -95,6 +97,12 @@ public class DebugSetup : MonoBehaviour
                 hexCell.SpecialFeatureIndex = Random.Range(1, 4);
             }
 
+
+            for (int i = 0; i < NumUnits;++i)
+            {
+                HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
+                mapEditor.CreateUnit(hexCell);
+            }
 
             m_haveBuilt = true;
 

@@ -30,17 +30,31 @@ public class HexCellDataShader : MonoBehaviour
             m_cellTexture = new Texture2D(x, z, TextureFormat.RGBA32, false, true);
             m_cellTexture.filterMode = FilterMode.Point;
             m_cellTexture.wrapMode = TextureWrapMode.Clamp;
+
+            Shader.SetGlobalTexture("_HexCellData", m_cellTexture);
+
         }
-        //gameObject.SetActive(true);
+
+        Shader.SetGlobalVector("_HexCellData_TexelSize", new Vector4(1f / x, 1f / z, x, z));
         enabled = true;
     }
 
     public void RefreshTerrain(HexCell hexCell)
     {
-        m_cellTextureData[hexCell.CellIndex].a = (byte)hexCell.TerrainTypeIndex;
-        enabled = false;
-
+        Color32 data = m_cellTextureData[hexCell.CellIndex];
+        data.a = (byte)hexCell.TerrainTypeIndex;
+        m_cellTextureData[hexCell.CellIndex] = data;
+        enabled = true;
     }
+
+    public void RefreshVisibility(HexCell hexCell)
+    {
+        Color32 data = m_cellTextureData[hexCell.CellIndex];
+        data.r = (byte)(hexCell.IsVisible ? 255 : 0);
+        m_cellTextureData[hexCell.CellIndex] = data;
+        enabled = true;
+    }
+
 
     public void LateUpdate()
     {

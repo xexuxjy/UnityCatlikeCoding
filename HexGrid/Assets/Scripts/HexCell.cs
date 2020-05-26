@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -626,5 +627,30 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
 
     public int CellIndex
     { get; set; }
+
+
+    private int m_visibilityCount;
+    public bool IsVisible
+    {
+        get { return m_visibilityCount > 0; }
+    }
+
+    public void IncreaseVisibility()
+    {
+        m_visibilityCount++;
+        if(m_visibilityCount == 1)
+        {
+            HexCellDataShader.RefreshVisibility(this);
+        }
+    }
+    public void DecreaseVisibility()
+    {
+        m_visibilityCount--;
+        if (m_visibilityCount == 0)
+        {
+            HexCellDataShader.RefreshVisibility(this);
+        }
+
+    }
 
 }
