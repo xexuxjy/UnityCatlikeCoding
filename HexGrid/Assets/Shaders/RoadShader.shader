@@ -55,7 +55,7 @@
             float4 cell1 = GetCellData(v,0);
 
             data.visibility = cell0.x * v.color.x + cell1.x *v.color.y;
-            data.visibilty = VisibilitLerplerp(data.visibilty);
+            data.visibility = lerp(0.25,1,data.visibility);
 
 		}
 

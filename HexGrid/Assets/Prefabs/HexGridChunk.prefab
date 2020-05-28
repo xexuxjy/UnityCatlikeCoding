@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 0
-  UseUVs: 0
+  UseUVs: 1
   UseUV2s: 0
   UseCellData: 1
 --- !u!1 &442110983
@@ -291,7 +291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 0
-  UseUVs: 0
+  UseUVs: 1
   UseUV2s: 0
   UseCellData: 1
 --- !u!1 &1735534716
@@ -389,7 +389,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 0
-  UseUVs: 0
+  UseUVs: 1
   UseUV2s: 0
   UseCellData: 1
 --- !u!1 &2003556033
@@ -487,8 +487,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseCollider: 0
-  UseUVs: 0
-  UseUV2s: 0
+  UseUVs: 1
+  UseUV2s: 1
   UseCellData: 1
 --- !u!1 &2038000925
 GameObject:
@@ -703,7 +703,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63d218a069199f94891f0ebb6a6b441a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GridCanvas: {fileID: 0}
+  GridCanvas: {fileID: 6159399185387422495}
   Terrain: {fileID: 2695290110854888276}
   Rivers: {fileID: 1735534717}
   Roads: {fileID: 647373631}
@@ -711,7 +711,7 @@ MonoBehaviour:
   WaterShore: {fileID: 359502499}
   Estuaries: {fileID: 2003556034}
   Walls: {fileID: 7484652051844608037}
-  SplatTextureArray: {fileID: 0}
+  SplatTextureArray: {fileID: 18700000, guid: e47ab0c47bd49ed4fac86a30ed136b64, type: 2}
   FeatureManager: {fileID: 2038000926}
 --- !u!1 &7532586370311272593
 GameObject:

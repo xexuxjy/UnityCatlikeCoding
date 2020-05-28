@@ -33,7 +33,7 @@
 			float4 color : COLOR;
             float3 worldPos;
             float3 terrain;
-            float3 visibilty;
+            float3 visibility;
         };
 
         half _Glossiness;
@@ -58,18 +58,18 @@
 			data.terrain.y = cell1.w;
 			data.terrain.z = cell2.w;
 
-            data.visibilty.x = cell0.x;
-            data.visibilty.y = cell1.x;
-            data.visibilty.z = cell2.x;
+            data.visibility.x = cell0.x;
+            data.visibility.y = cell1.x;
+            data.visibility.z = cell2.x;
 
-            data.visibilty = VisibilitLerplerp(data.visibilty);
+            data.visibility = lerp(0.25,1,data.visibility);
 		}
 
 		float4 GetTerrainColor (Input IN, int index) 
 		{
 			float3 uvw = float3(IN.worldPos.xz * 0.02, IN.terrain[index]);
 			float4 c = UNITY_SAMPLE_TEX2DARRAY(_MainTex, uvw);
-			return c * (IN.color[index] * IN.visibilty[index]);
+			return c * (IN.color[index] * IN.visibility[index]);
 		}
 
         void surf (Input IN, inout SurfaceOutputStandard o)
