@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DefaultFeatureMaterial
+  m_Name: UrbanMaterial
   m_Shader: {fileID: 4800000, guid: b096a4e1a6971484684f005e1c3372ac, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -77,6 +77,8 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
+    - _BackgroundColor: {r: 0.40784314, g: 0.38039216, b: 0.35686275, a: 1}
     - _Color: {r: 0.9433962, g: 0.12014952, b: 0.12014952, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Specular: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []

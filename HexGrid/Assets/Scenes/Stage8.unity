@@ -14680,6 +14680,31 @@ PrefabInstance:
       propertyPath: HexGrid
       value: 
       objectReference: {fileID: 821437758}
+    - target: {fileID: 6827089471604810849, guid: a226196ff97448f44bb7c6945696dead,
+        type: 3}
+      propertyPath: m_ClearFlags
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827089471604810849, guid: a226196ff97448f44bb7c6945696dead,
+        type: 3}
+      propertyPath: m_BackGroundColor.r
+      value: 0.40784314
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827089471604810849, guid: a226196ff97448f44bb7c6945696dead,
+        type: 3}
+      propertyPath: m_BackGroundColor.g
+      value: 0.38039216
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827089471604810849, guid: a226196ff97448f44bb7c6945696dead,
+        type: 3}
+      propertyPath: m_BackGroundColor.b
+      value: 0.35686275
+      objectReference: {fileID: 0}
+    - target: {fileID: 6827089471604810849, guid: a226196ff97448f44bb7c6945696dead,
+        type: 3}
+      propertyPath: m_BackGroundColor.a
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a226196ff97448f44bb7c6945696dead, type: 3}
 --- !u!1 &1748998704

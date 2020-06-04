@@ -28,6 +28,9 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     HexCell[] m_neighbours = new HexCell[6];
 
 
+    public bool IsExplored
+    { get; private set; }
+
     public bool HasIncomingRiver
     {
         get { return m_hasIncomingRiver; }
@@ -529,6 +532,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     {
         m_terrainTypeIndex = binReader.ReadByte();
         m_elevation = binReader.ReadByte();
+        IsExplored = binReader.ReadBoolean();
         m_waterLevel = binReader.ReadByte();
         m_urbanDensityLevel = binReader.ReadByte();
         m_farmDensityLevel = binReader.ReadByte();
@@ -553,6 +557,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     {
         binWriter.Write((byte)m_terrainTypeIndex);
         binWriter.Write((byte)m_elevation);
+        binWriter.Write(IsExplored);
         binWriter.Write((byte)m_waterLevel);
         binWriter.Write((byte)m_urbanDensityLevel);
         binWriter.Write((byte)m_farmDensityLevel);
@@ -640,6 +645,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
         m_visibilityCount++;
         if(m_visibilityCount == 1)
         {
+            IsExplored = true;
             HexCellDataShader.RefreshVisibility(this);
         }
     }

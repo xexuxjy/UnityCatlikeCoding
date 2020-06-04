@@ -51,6 +51,8 @@ public class HexCellDataShader : MonoBehaviour
     {
         Color32 data = m_cellTextureData[hexCell.CellIndex];
         data.r = (byte)(hexCell.IsVisible ? 255 : 0);
+        data.g = (byte)(hexCell.IsExplored? 255 : 0);
+
         m_cellTextureData[hexCell.CellIndex] = data;
         enabled = true;
     }

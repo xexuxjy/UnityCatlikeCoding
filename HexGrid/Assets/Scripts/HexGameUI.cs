@@ -32,6 +32,14 @@ public class HexGameUI : MonoBehaviour
 	{
 		enabled = !toggle;
 		HexGrid.ShowUI(!toggle);
+		if(toggle)
+		{
+			Shader.EnableKeyword("HEX_MAP_EDIT_MODE");
+		}
+		else
+		{
+			Shader.DisableKeyword("HEX_MAP_EDIT_MODE");
+		}
 	}
 
 
@@ -64,11 +72,9 @@ public class HexGameUI : MonoBehaviour
 			if(m_currentCell != null && m_selectedUnit.IsValidDestination(m_currentCell))
 			{
 				ClearPaths();
-				int speed = 24;
-				HexGrid.FindPathTo(m_selectedUnit.Location, m_currentCell, speed, m_pathFindingResults);
-				DrawStartEndPath(m_pathFindingResults, speed);
+				HexGrid.FindPathTo(m_selectedUnit.Location, m_currentCell, m_selectedUnit,m_pathFindingResults);
+				DrawStartEndPath(m_pathFindingResults, m_selectedUnit.Speed);
 				m_selectedUnit.CopyPath(m_pathFindingResults);
-				//m_selectedUnit.Travel();
 			}
 			else
 			{

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml.Schema;
 using UnityEngine;
 
 public class HexUnit : MonoBehaviour
@@ -77,7 +78,7 @@ public class HexUnit : MonoBehaviour
 
 	public bool IsValidDestination(HexCell cell)
 	{
-		return !cell.IsUnderwater && !cell.HexUnit;
+		return cell.IsExplored && !cell.IsUnderwater && !cell.HexUnit;
 	}
 
 	private List<HexCell> m_moveList = new List<HexCell>();
@@ -191,6 +192,48 @@ public class HexUnit : MonoBehaviour
 		transform.LookAt(point);
 		Orientation = transform.localRotation.eulerAngles.y;
 	}
+
+	public int GetMoveCost(HexCell fromCell,HexCell toCell,HexDirection dir)
+    {
+		HexEdgeType edgeType = fromCell.GetEdgeType(toCell);
+		bool roadThroughEdge = fromCell.HasRoadThroughEdge(dir);
+
+		if (toCell.IsUnderwater || toCell.HexUnit != null)
+		{
+			return -1;
+		}
+
+		if (edgeType == HexEdgeType.Cliff)
+		{
+			return -1;
+		}
+
+		if (!roadThroughEdge && fromCell.Walled != toCell.Walled)
+		{
+			return -1;
+		}
+
+		int moveCost = 1;
+
+		// fast travel via roads.
+		if (roadThroughEdge)
+		{
+			moveCost = 1;
+
+		}
+		else
+		{
+			moveCost = edgeType == HexEdgeType.Flat ? 5 : 10;
+			moveCost += toCell.UrbanDensityLevel;
+			moveCost += toCell.FarmDensityLevel;
+			moveCost += toCell.PlantDensityLevel;
+
+		}
+		return moveCost;
+	}
+
+	public int Speed
+	{ get { return 24; } }
 
 
 }
