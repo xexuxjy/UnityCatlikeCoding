@@ -14,7 +14,13 @@ public class HexUnit : MonoBehaviour
 	public HexGrid HexGrid
 	{ get; set; }
 
-	public const int VisionRange = 3;
+//	public const int VisionRange = 3;
+
+	public int VisionRange
+	{
+		get { return 3; }
+	}
+
 
 	public HexCell Location
 	{
@@ -232,8 +238,10 @@ public class HexUnit : MonoBehaviour
 		return moveCost;
 	}
 
+	private int m_moveSpeed = 24;
 	public int Speed
-	{ get { return 24; } }
+	{ get { return m_moveSpeed; } }
+
 
 
 }

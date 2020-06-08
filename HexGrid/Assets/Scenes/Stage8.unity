@@ -11301,7 +11301,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1262047128}
   - component: {fileID: 1262047130}
-  - component: {fileID: 1262047129}
   m_Layer: 0
   m_Name: GameUI
   m_TagString: Untagged
@@ -11323,7 +11322,7 @@ Transform:
   m_Father: {fileID: 1989954664}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1262047129
+--- !u!114 &1262047130
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -11336,18 +11335,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HexGrid: {fileID: 821437758}
---- !u!114 &1262047130
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1262047127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f832eb158b3b407468c21fbd9641556e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &1262673815
 GameObject:
   m_ObjectHideFlags: 0
@@ -13345,7 +13332,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1262047129}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: HexGameUI, Assembly-CSharp
         m_MethodName: SetEditMode
         m_Mode: 0
@@ -17270,7 +17257,7 @@ MonoBehaviour:
   NumWater: 20
   NumWalls: 40
   NumSpecials: 80
-  NumUnits: 1
+  NumUnits: 5
   Rivers: 1
   Roads: 1
   Water: 1

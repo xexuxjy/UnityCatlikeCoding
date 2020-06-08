@@ -28,8 +28,15 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     HexCell[] m_neighbours = new HexCell[6];
 
 
+    private bool m_explored;
     public bool IsExplored
-    { get; private set; }
+    {
+        get { return m_explored && IsExplorable; }
+        private set { m_explored = value; }
+    }
+
+    public bool IsExplorable
+    { get; set; }
 
     public bool HasIncomingRiver
     {
@@ -60,6 +67,12 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     public bool HasRiverBeginningOrEnd
     {
         get { return HasIncomingRiver != HasOutgoingRiver; }
+    }
+
+
+    public int ViewElevation
+    {
+        get { return m_elevation >= m_waterLevel ? m_elevation : m_waterLevel; }
     }
 
     public bool HasRiverThroughEdge(HexDirection dir)
@@ -177,7 +190,15 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
         {
             if (m_waterLevel != value)
             {
+                int originalViewElevation = ViewElevation;
                 m_waterLevel = value;
+
+                if (originalViewElevation != ViewElevation)
+                {
+                    HexCellDataShader.ViewElevationChanged();
+                }
+
+
                 ValidateRivers();
                 Refresh();
             }
@@ -200,7 +221,15 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
             {
                 return;
             }
+
+            int originalViewElevation = ViewElevation;
+
             m_elevation = value;
+
+            if(originalViewElevation != ViewElevation)
+            {
+                HexCellDataShader.ViewElevationChanged();
+            }
 
             RefreshPosition();
 
@@ -637,7 +666,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     private int m_visibilityCount;
     public bool IsVisible
     {
-        get { return m_visibilityCount > 0; }
+        get { return m_visibilityCount > 0 && IsExplorable; }
     }
 
     public void IncreaseVisibility()
@@ -657,6 +686,15 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
             HexCellDataShader.RefreshVisibility(this);
         }
 
+    }
+
+    public void ResetVisability()
+    {
+        if(m_visibilityCount > 0)
+        {
+            m_visibilityCount = 0;
+            HexCellDataShader.RefreshVisibility(this);
+        }
     }
 
 }
