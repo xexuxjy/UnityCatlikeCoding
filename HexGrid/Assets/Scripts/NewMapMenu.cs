@@ -6,6 +6,7 @@ using UnityEngine;
 public class NewMapMenu : MonoBehaviour
 {
     public HexGrid HexGrid;
+    public HexMapGenerator HexMapGenerator;
 
 
     public void Open()
@@ -35,16 +36,30 @@ public class NewMapMenu : MonoBehaviour
         CreateMap(80, 60);
     }
 
+    private bool m_generateMaps;
+    public void GenerateMap(bool status)
+    {
+        m_generateMaps = status;
+    }
+
     public void CreateMap(int x,int z)
     {
+        if(m_generateMaps)
+        {
+            HexMapGenerator.GenerateMap(x, z);
+        }
+        else
+        {
+            HexGrid.CreateMap(x, z);
+        }
+        
         HexMapCamera.ValidatePosition();
-        HexGrid.CreateMap(x, z);
         Close();
     }
 
     public void Cancel()
     {
-
+        Close();
     }
 
 }

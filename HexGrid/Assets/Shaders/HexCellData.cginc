@@ -5,7 +5,7 @@ float4 FilterCellData(float4 data)
 {
 #if defined(HEX_MAP_EDIT_MODE)
   data.xy = 1;
-#endif;
+#endif
 return data;
 
 }

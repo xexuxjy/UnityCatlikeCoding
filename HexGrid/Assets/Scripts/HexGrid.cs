@@ -32,7 +32,7 @@ public class HexGrid : MonoBehaviour
 
     public Texture2D NoiseSource;
 
-    HexCell[] m_cells;
+    List<HexCell> m_cells;
     HexGridChunk[] m_gridChunks;
 
     HexCell m_currentPathFrom;
@@ -46,6 +46,13 @@ public class HexGrid : MonoBehaviour
 
 
     private HexCellDataShader m_hexCellShaderData;
+
+
+    public List<HexCell> ProcessHexCells()
+    {
+        return m_cells;
+    }
+
 
     void Awake()
     {
@@ -130,12 +137,13 @@ public class HexGrid : MonoBehaviour
 
     private void CreateCells()
     {
-        m_cells = new HexCell[CellCountZ * CellCountX];
+        m_cells = new List<HexCell>(CellCountZ * CellCountX);
         for (int z = 0, i = 0; z < CellCountZ; ++z)
         {
             for (int x = 0; x < CellCountX; ++x)
             {
-                m_cells[i] = CreateCell(x, z, i++);
+                //m_cells[i] = CreateCell(x, z, i++);
+                m_cells.Add(CreateCell(x, z, i++));
             }
         }
 
@@ -164,7 +172,22 @@ public class HexGrid : MonoBehaviour
     public HexCell GetCell(HexCoordinates coordinates)
     {
         int cellIndex = coordinates.X + (coordinates.Z * CellCountX) + (coordinates.Z / 2);
-        if (cellIndex >= 0 && cellIndex < m_cells.Length)
+        if (cellIndex >= 0 && cellIndex < m_cells.Count)
+        {
+            return m_cells[cellIndex];
+        }
+        return null;
+    }
+    public HexCell GetCell(int xOffset,int zOffset)
+    {
+        int cellIndex = (zOffset * CellCountX) + xOffset;
+        return GetCell(cellIndex);
+    }
+
+
+    public HexCell GetCell(int cellIndex)
+    {
+        if(cellIndex >=0 && cellIndex<=m_cells.Count-1)
         {
             return m_cells[cellIndex];
         }
@@ -174,12 +197,18 @@ public class HexGrid : MonoBehaviour
     private Random m_random = new Random();
     public HexCell GetRandomCell()
     {
-        int index = Random.Range(0, m_cells.Length);
-        if(index >= 0 && index < m_cells.Length)
+        int index = Random.Range(0, m_cells.Count);
+        if(index >= 0 && index < m_cells.Count)
         {
             return m_cells[index];
         }
         return null;
+    }
+
+    public int CellCount
+    {
+        get { return m_cells.Count; }
+            
     }
 
 
@@ -284,12 +313,12 @@ public class HexGrid : MonoBehaviour
 
         m_searchFrontierPhase = 2;
         ClearPath();
+        ResetSearchPhase();
 
-        for (int i = 0; i < m_cells.Length; i++)
+        for (int i = 0; i < m_cells.Count; i++)
         {
             m_cells[i].SetLabel(null);
             m_cells[i].DisableHighlight();
-            m_cells[i].SearchPhase = 0;
         }
 
         WaitForSeconds delay = new WaitForSeconds(1 / 60f);
@@ -368,7 +397,7 @@ public class HexGrid : MonoBehaviour
         }
 
 
-        //for (int i = 0; i < m_cells.Length; i++)
+        //for (int i = 0; i < m_cells.Count; i++)
         //{
         //    yield return delay;
         //    m_cells[i].Distance = cell.Coordinates.DistanceTo(m_cells[i].Coordinates);
@@ -442,7 +471,7 @@ public class HexGrid : MonoBehaviour
 
     public void Save(BinaryWriter writer)
     {
-        for (int i = 0; i < m_cells.Length; i++)
+        for (int i = 0; i < m_cells.Count; i++)
         {
             m_cells[i].Save(writer);
         }
@@ -463,7 +492,7 @@ public class HexGrid : MonoBehaviour
         bool originalImmediateMode = m_hexCellShaderData.ImmediateMode;
         m_hexCellShaderData.ImmediateMode = true;
 
-        for (int i = 0; i < m_cells.Length; i++)
+        for (int i = 0; i < m_cells.Count; i++)
         {
             m_cells[i].Load(reader);
         }
@@ -508,6 +537,15 @@ public class HexGrid : MonoBehaviour
         ListPool<HexCell>.Return(cells);
     }
 
+    public void ResetSearchPhase()
+    {
+        for (int i = 0; i < m_cells.Count; i++)
+        {
+            m_cells[i].SearchPhase = 0;
+        }
+
+    }
+
     List<HexCell> GetVisibleCells(HexCell fromCell, int range)
     {
         List<HexCell> visibleCells = ListPool<HexCell>.Get();
@@ -515,10 +553,7 @@ public class HexGrid : MonoBehaviour
 
         m_searchFrontierPhase = 2;
         ClearPath();
-        for (int i = 0; i < m_cells.Length; i++)
-        {
-            m_cells[i].SearchPhase = 0;
-        }
+        ResetSearchPhase();
 
         HexCoordinates fromCoordinates = fromCell.Coordinates;
 
