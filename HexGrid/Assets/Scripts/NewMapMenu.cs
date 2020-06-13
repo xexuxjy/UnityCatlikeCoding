@@ -36,7 +36,7 @@ public class NewMapMenu : MonoBehaviour
         CreateMap(80, 60);
     }
 
-    private bool m_generateMaps;
+    private bool m_generateMaps = true;
     public void GenerateMap(bool status)
     {
         m_generateMaps = status;

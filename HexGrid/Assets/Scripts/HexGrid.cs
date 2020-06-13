@@ -48,7 +48,7 @@ public class HexGrid : MonoBehaviour
     private HexCellDataShader m_hexCellShaderData;
 
 
-    public List<HexCell> ProcessHexCells()
+    public List<HexCell> GetHexCells()
     {
         return m_cells;
     }

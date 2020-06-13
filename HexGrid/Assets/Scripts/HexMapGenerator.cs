@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 public class HexMapGenerator : MonoBehaviour
 {
@@ -36,8 +37,35 @@ public class HexMapGenerator : MonoBehaviour
     [Range(6, 10)]
     public int ElevationMaximum = 8;
 
+    [Range(0, 10)]
+    public int MapBorderX = 5;
+
+    [Range(0, 10)]
+    public int MapBorderZ = 5;
+
+    [Range(0, 10)]
+    public int RegionBorder = 5;
+
+    [Range(1, 4)]
+    public int RegionCount = 1;
+
+    [Range(0, 100)]
+    public int ErosionPercentage = 50;
+
     public bool UseFixedSeed;
     public int Seed;
+
+
+
+    public HexCell GetRandomCell(MapRegion mapRegion)
+    {
+        return HexGrid.GetCell(Random.Range(mapRegion.xMin, mapRegion.xMax), Random.Range(mapRegion.zMin, mapRegion.zMax));
+    }
+    
+
+    //MapRegion m_mapRegion;
+    private List<MapRegion> m_mapRegions = new List<MapRegion>();
+
 
     public void GenerateMap(int x, int z)
     {
@@ -58,36 +86,130 @@ public class HexMapGenerator : MonoBehaviour
         }
         HexGrid.ResetSearchPhase();
 
-        foreach (HexCell hexCell in HexGrid.ProcessHexCells())
+        foreach (HexCell hexCell in HexGrid.GetHexCells())
         {
             hexCell.WaterLevel = WaterLevel;
         }
 
+        CreateRegions(x,z);
+
         CreateLand();
+        ErodeLand();
         SetTerrainType();
+
+        Random.state = originalRandomState;
     }
+
+
+    public void CreateRegions(int x,int z)
+    {
+        m_mapRegions.Clear();
+        MapRegion region = new MapRegion();
+
+        switch(RegionCount)
+        {
+            default:
+                region.xMin = MapBorderX;
+                region.xMax = HexGrid.CellCountX - MapBorderX;
+                region.zMin = MapBorderZ;
+                region.zMax = HexGrid.CellCountZ - MapBorderZ;
+                m_mapRegions.Add(region);
+                break;
+            case 2:
+                if (Random.value < 0.5f)
+                {
+                    region.xMin = MapBorderX;
+                    region.xMax = HexGrid.CellCountX / 2 - RegionBorder;
+                    region.zMin = MapBorderZ;
+                    region.zMax = HexGrid.CellCountZ - MapBorderZ;
+                    m_mapRegions.Add(region);
+                    region.xMin = HexGrid.CellCountX / 2 + RegionBorder;
+                    region.xMax = HexGrid.CellCountX - MapBorderX;
+                    m_mapRegions.Add(region);
+                }
+                else
+                {
+                    region.xMin = MapBorderX;
+                    region.xMax = HexGrid.CellCountX - MapBorderX;
+                    region.zMin = MapBorderZ;
+                    region.zMax = HexGrid.CellCountZ / 2 - RegionBorder;
+                    m_mapRegions.Add(region);
+                    region.zMin = HexGrid.CellCountZ / 2 + RegionBorder;
+                    region.zMax = HexGrid.CellCountZ - MapBorderZ;
+                    m_mapRegions.Add(region);
+                }
+                break;
+            case 3:
+                region.xMin = MapBorderX;
+                region.xMax = HexGrid.CellCountX / 3 - RegionBorder;
+                region.zMin = MapBorderZ;
+                region.zMax = HexGrid.CellCountZ - MapBorderZ;
+                m_mapRegions.Add(region);
+                region.xMin = HexGrid.CellCountX / 3 + RegionBorder;
+                region.xMax = HexGrid.CellCountX * 2 / 3 - RegionBorder;
+                m_mapRegions.Add(region);
+                region.xMin = HexGrid.CellCountX * 2 / 3 + RegionBorder;
+                region.xMax = HexGrid.CellCountX - MapBorderX;
+                m_mapRegions.Add(region);
+                break;
+            case 4:
+                region.xMin = MapBorderX;
+                region.xMax = HexGrid.CellCountX / 2 - RegionBorder;
+                region.zMin = MapBorderZ;
+                region.zMax = HexGrid.CellCountZ / 2 - RegionBorder;
+                m_mapRegions.Add(region);
+                region.xMin = HexGrid.CellCountX / 2 + RegionBorder;
+                region.xMax = HexGrid.CellCountX - MapBorderX;
+                m_mapRegions.Add(region);
+                region.zMin = HexGrid.CellCountZ / 2 + RegionBorder;
+                region.zMax = HexGrid.CellCountZ - MapBorderZ;
+                m_mapRegions.Add(region);
+                region.xMin = MapBorderX;
+                region.xMax = HexGrid.CellCountX / 2 - RegionBorder;
+                m_mapRegions.Add(region);
+                break;
+        }
+
+
+    }
+
 
     public void CreateLand()
     {
         int landBudget = Mathf.RoundToInt(HexGrid.CellCount * LandPercentage * 0.01f);
-        while (landBudget > 0)
+        //while (landBudget > 0)
+        for(int guard = 0;guard < 10000;++guard)
         {
-            int chunkSize = Random.Range(ChunkSizeMin, ChunkSizeMax - 1);
-            if (Random.value < SinkProbability)
+            bool sink = Random.value < SinkProbability;
+            for (int i = 0; i < m_mapRegions.Count; ++i)
             {
-                landBudget = SinkTerrain(chunkSize, landBudget);
+                MapRegion mapRegion = m_mapRegions[i];
+                int chunkSize = Random.Range(ChunkSizeMin, ChunkSizeMax - 1);
+                if (sink)
+                {
+                    landBudget = SinkTerrain(chunkSize, landBudget, mapRegion);
+                }
+                else
+                {
+                    landBudget = RaiseTerrain(chunkSize, landBudget, mapRegion);
+                    if (landBudget == 0)
+                    {
+                        return;
+                    }
+                }
             }
-            else
-            { 
-                landBudget = RaiseTerrain(chunkSize, landBudget);
-            }
+        }
+
+        if (landBudget > 0)
+        {
+            Debug.LogWarning("Failed to use up " + landBudget + " land budget.");
         }
     }
 
 
     public void SetTerrainType()
     {
-        foreach (HexCell hexCell in HexGrid.ProcessHexCells())
+        foreach (HexCell hexCell in HexGrid.GetHexCells())
         {
             if (!hexCell.IsUnderwater)
             {
@@ -96,10 +218,11 @@ public class HexMapGenerator : MonoBehaviour
         }
     }
 
-    public int RaiseTerrain(int chunkSize, int budget)
+    public int RaiseTerrain(int chunkSize, int budget,MapRegion mapRegion)
     {
+        HexGrid.ResetSearchPhase();
         int searchPhase = 1;
-        HexCell firstCell = HexGrid.GetRandomCell();
+        HexCell firstCell = GetRandomCell(mapRegion);
         firstCell.SearchPhase = searchPhase;
         firstCell.Distance = 0;
         firstCell.SearchHeuristic = 0;
@@ -130,7 +253,7 @@ public class HexMapGenerator : MonoBehaviour
 
             size++;
 
-            for (HexDirection dir = HexDirection.NE; dir <= HexDirection.SW; dir++)
+            for (HexDirection dir = HexDirection.NE; dir <= HexDirection.NW; dir++)
             {
                 HexCell neighbour = current.GetNeighbour(dir);
                 if (neighbour != null && neighbour.SearchPhase < searchPhase)
@@ -149,10 +272,11 @@ public class HexMapGenerator : MonoBehaviour
 
 
 
-    public int SinkTerrain(int chunkSize, int budget)
+    public int SinkTerrain(int chunkSize, int budget, MapRegion mapRegion)
     {
+        HexGrid.ResetSearchPhase();
         int searchPhase = 1;
-        HexCell firstCell = HexGrid.GetRandomCell();
+        HexCell firstCell = GetRandomCell(mapRegion);
         firstCell.SearchPhase = searchPhase;
         firstCell.Distance = 0;
         firstCell.SearchHeuristic = 0;
@@ -185,7 +309,7 @@ public class HexMapGenerator : MonoBehaviour
 
             size++;
 
-            for (HexDirection dir = HexDirection.NE; dir <= HexDirection.SW; dir++)
+            for (HexDirection dir = HexDirection.NE; dir <= HexDirection.NW; dir++)
             {
                 HexCell neighbour = current.GetNeighbour(dir);
                 if (neighbour != null && neighbour.SearchPhase < searchPhase)
@@ -200,4 +324,97 @@ public class HexMapGenerator : MonoBehaviour
         }
         return budget;
     }
+
+
+    public void ErodeLand()
+    {
+        List<HexCell> erodibleCells = ListPool<HexCell>.Get();
+        foreach (HexCell hexCell in HexGrid.GetHexCells())
+        {
+            if (IsErodible(hexCell))
+            {
+                erodibleCells.Add(hexCell);
+            }
+        }
+
+        int targetErodibleCount = (int) (erodibleCells.Count * (100 - ErosionPercentage) * 0.01f);
+
+        while (erodibleCells.Count > targetErodibleCount)
+        {
+            int index = Random.Range(0, erodibleCells.Count);
+            HexCell erodibleCell = erodibleCells[index];
+            HexCell targetCell = GetErosionTarget(erodibleCell);
+            erodibleCell.Elevation -= 1;
+            targetCell.Elevation += 1;
+
+            for (HexDirection dir = HexDirection.NE; dir <= HexDirection.NW; dir++)
+            {
+                HexCell neighbour = targetCell.GetNeighbour(dir);
+                if (neighbour != null && neighbour != erodibleCell && !IsErodible(neighbour) && neighbour.Elevation == targetCell.Elevation + 1)
+                {
+                    erodibleCells.Remove(neighbour);
+                }
+            }
+
+
+            if (!IsErodible(erodibleCell))
+            {
+                erodibleCells.Remove(erodibleCell);
+            }
+            for (HexDirection dir = HexDirection.NE; dir <= HexDirection.NW; dir++)
+            {
+                HexCell neighbour = erodibleCell.GetNeighbour(dir);
+                if (neighbour != null && IsErodible(neighbour) && !erodibleCells.Contains(neighbour))
+                {
+                    erodibleCells.Add(neighbour);
+                }
+            }
+        }
+
+        ListPool<HexCell>.Return(erodibleCells);
+
+    }
+
+    public bool IsErodible(HexCell hexCell)
+    {
+        int erodibleElevation = hexCell.Elevation - 2;
+        for (HexDirection dir = HexDirection.NE; dir <= HexDirection.NW; dir++)
+        {
+            HexCell neighbor = hexCell.GetNeighbour(dir);
+            if (neighbor && neighbor.Elevation <= erodibleElevation)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public HexCell GetErosionTarget(HexCell cell)
+    {
+        List<HexCell> candidates = ListPool<HexCell>.Get();
+        int erodibleElevation = cell.Elevation - 2;
+        for (HexDirection dir = HexDirection.NE; dir <= HexDirection.NW; dir++)
+        {
+            HexCell neighbor = cell.GetNeighbour(dir);
+            if (neighbor && neighbor.Elevation <= erodibleElevation)
+            {
+                candidates.Add(neighbor);
+            }
+        }
+        HexCell target = candidates[Random.Range(0, candidates.Count)];
+        ListPool<HexCell>.Return(candidates);
+        return target;
+    }
+
 }
+
+
+public struct MapRegion
+{
+    public int xMin;
+    public int xMax;
+
+    public int zMin;
+    public int zMax;
+}
+
