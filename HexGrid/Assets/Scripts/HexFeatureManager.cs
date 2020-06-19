@@ -36,12 +36,15 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
 
     public Transform PickFeaturePrefab(HexFeatureCollection[] collections, int level, float hash, float choice)
     {
-        float[] chances = HexMetrics.GetFeatureThresholds(level);
-        for (int i = 0; i < chances.Length; ++i)
+        if (level > 0)
         {
-            if (hash < chances[i])
+            float[] chances = HexMetrics.GetFeatureThresholds(level-1);
+            for (int i = 0; i < chances.Length; ++i)
             {
-                return collections[i].Pick(choice);
+                if (hash < chances[i])
+                {
+                    return collections[i].Pick(choice);
+                }
             }
         }
         return null;
@@ -55,15 +58,15 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
         }
 
         HexHash hexHash = HexMetrics.SampleHashGrid(position);
-        if (hexHash.a >= 0.25f * cell.UrbanDensityLevel)
-        {
-            return;
-        }
+        //if (hexHash.a >= 0.25f * cell.UrbanDensityLevel)
+        //{
+        //    return;
+        //}
 
 
-        Transform urbanFeature = PickFeaturePrefab(UrbanFeatureCollections, cell.UrbanDensityLevel - 1, hexHash.a, hexHash.choice);
-        Transform farmFeature = PickFeaturePrefab(FarmFeatureCollections, cell.FarmDensityLevel - 1, hexHash.b, hexHash.choice);
-        Transform plantFeature = PickFeaturePrefab(PlantFeatureCollections, cell.PlantDensityLevel - 1, hexHash.c, hexHash.choice);
+        Transform urbanFeature = PickFeaturePrefab(UrbanFeatureCollections, cell.UrbanDensityLevel, hexHash.a, hexHash.choice);
+        Transform farmFeature = PickFeaturePrefab(FarmFeatureCollections, cell.FarmDensityLevel, hexHash.b, hexHash.choice);
+        Transform plantFeature = PickFeaturePrefab(PlantFeatureCollections, cell.PlantDensityLevel , hexHash.c, hexHash.choice);
 
         float defaultMax = 1000;
         Transform chosenTransform = null;
