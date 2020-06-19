@@ -32,16 +32,20 @@ public class HexMapCamera : MonoBehaviour
         instance = this;
     }
 
-    private void Awake()
+    void Awake()
     {
         instance = this;
+
     }
 
     public static bool Locked
     {
         set
         {
-            instance.enabled = !value;
+            if (instance != null)
+            {
+                instance.enabled = !value;
+            }
         }
     }
 

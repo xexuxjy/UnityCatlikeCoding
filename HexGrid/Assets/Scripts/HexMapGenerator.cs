@@ -1,6 +1,5 @@
-﻿using System.CodeDom;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
@@ -52,6 +51,31 @@ public class HexMapGenerator : MonoBehaviour
     [Range(0, 100)]
     public int ErosionPercentage = 50;
 
+    [Range(0, 1f)]
+    public float Evaporation = 0.5f;
+
+    [Range(0, 1f)]
+    public float PrecipitationFactor = 0.25f;
+
+    [Range(0, 1f)]
+    public float EvaporationFactor = 0.5f;
+
+    [Range(0, 1f)]
+    public float RunoffFactor = 0.25f;
+
+    [Range(0, 1f)]
+    public float SeepageFactor = 0.125f;
+
+    [Range(0, 1f)]
+    public float StartingMoisture = 0.1f;
+
+
+    public HexDirection WindDirection = HexDirection.NW;
+
+    [Range(0, 10f)]
+    public float WindStrength = 4f;
+
+
     public bool UseFixedSeed;
     public int Seed;
 
@@ -61,11 +85,13 @@ public class HexMapGenerator : MonoBehaviour
     {
         return HexGrid.GetCell(Random.Range(mapRegion.xMin, mapRegion.xMax), Random.Range(mapRegion.zMin, mapRegion.zMax));
     }
-    
+
 
     //MapRegion m_mapRegion;
     private List<MapRegion> m_mapRegions = new List<MapRegion>();
 
+    private List<ClimateData> m_climateData = new List<ClimateData>();
+    private List<ClimateData> m_nextClimateData = new List<ClimateData>();
 
     public void GenerateMap(int x, int z)
     {
@@ -91,22 +117,25 @@ public class HexMapGenerator : MonoBehaviour
             hexCell.WaterLevel = WaterLevel;
         }
 
-        CreateRegions(x,z);
+        CreateRegions(x, z);
 
         CreateLand();
         ErodeLand();
+
+        CreateClimate();
+
         SetTerrainType();
 
         Random.state = originalRandomState;
     }
 
 
-    public void CreateRegions(int x,int z)
+    public void CreateRegions(int x, int z)
     {
         m_mapRegions.Clear();
         MapRegion region = new MapRegion();
 
-        switch(RegionCount)
+        switch (RegionCount)
         {
             default:
                 region.xMin = MapBorderX;
@@ -178,7 +207,7 @@ public class HexMapGenerator : MonoBehaviour
     {
         int landBudget = Mathf.RoundToInt(HexGrid.CellCount * LandPercentage * 0.01f);
         //while (landBudget > 0)
-        for(int guard = 0;guard < 10000;++guard)
+        for (int guard = 0; guard < 10000; ++guard)
         {
             bool sink = Random.value < SinkProbability;
             for (int i = 0; i < m_mapRegions.Count; ++i)
@@ -211,14 +240,33 @@ public class HexMapGenerator : MonoBehaviour
     {
         foreach (HexCell hexCell in HexGrid.GetHexCells())
         {
+            float moisture = m_climateData[hexCell.CellIndex].moisture;
+            int indexType = 2;
             if (!hexCell.IsUnderwater)
             {
-                hexCell.TerrainTypeIndex = hexCell.Elevation - hexCell.WaterLevel;
+                if (moisture < 0.05f)
+                {
+                    indexType = 4;
+                }
+                else if (moisture < 0.12f)
+                {
+                    indexType = 0;
+                }
+                else if (moisture < 0.28f)
+                {
+                    indexType = 3;
+                }
+                else if (moisture < 0.85f)
+                {
+                    indexType = 1;
+                }
             }
+            hexCell.TerrainTypeIndex = indexType;
+            hexCell.SetMapData(moisture);
         }
     }
 
-    public int RaiseTerrain(int chunkSize, int budget,MapRegion mapRegion)
+    public int RaiseTerrain(int chunkSize, int budget, MapRegion mapRegion)
     {
         HexGrid.ResetSearchPhase();
         int searchPhase = 1;
@@ -337,7 +385,7 @@ public class HexMapGenerator : MonoBehaviour
             }
         }
 
-        int targetErodibleCount = (int) (erodibleCells.Count * (100 - ErosionPercentage) * 0.01f);
+        int targetErodibleCount = (int)(erodibleCells.Count * (100 - ErosionPercentage) * 0.01f);
 
         while (erodibleCells.Count > targetErodibleCount)
         {
@@ -406,6 +454,113 @@ public class HexMapGenerator : MonoBehaviour
         return target;
     }
 
+    private void CreateClimate()
+    {
+        m_climateData.Clear();
+        m_nextClimateData.Clear();
+
+        ClimateData initialClimateData = new ClimateData();
+        ClimateData clearClimateData = new ClimateData();
+        initialClimateData.moisture = StartingMoisture;
+        foreach (HexCell hexCell in HexGrid.GetHexCells())
+        {
+            m_climateData.Add(initialClimateData);
+            m_nextClimateData.Add(clearClimateData);
+        }
+
+        for (int i = 0; i < 40; ++i)
+        {
+            foreach (HexCell hexCell in HexGrid.GetHexCells())
+            {
+                EvolveClimate(hexCell);
+            }
+            List<ClimateData> swap = m_climateData;
+            m_climateData = m_nextClimateData;
+            m_nextClimateData = swap;
+
+        }
+
+    }
+
+    public void EvolveClimate(HexCell hexCell)
+    {
+        ClimateData climateData = m_climateData[hexCell.CellIndex];
+        if (hexCell.IsUnderwater)
+        {
+            climateData.moisture = 1f;
+            climateData.clouds += Evaporation;
+        }
+        else
+        {
+            float evaporation = climateData.moisture * EvaporationFactor;
+            climateData.moisture -= evaporation;
+            climateData.clouds += evaporation;
+        }
+
+        float precipitation = climateData.clouds * PrecipitationFactor;
+        climateData.clouds -= precipitation;
+        climateData.moisture += precipitation;
+
+        float cloudMaximum = 1f - hexCell.ViewElevation / (ElevationMaximum + 1f);
+
+        if (climateData.clouds > cloudMaximum)
+        {
+            climateData.moisture += climateData.clouds - cloudMaximum;
+            climateData.clouds = cloudMaximum;
+        }
+
+        float perCellFactor = (1f / 6f);
+
+        HexDirection mainDispersalDirection = WindDirection.Opposite();
+
+        float cloudDispersion = climateData.clouds * (1f / (5f + WindStrength));
+        float runoff = climateData.moisture * RunoffFactor * perCellFactor;
+        float seepage = climateData.moisture * SeepageFactor * perCellFactor;
+
+        for (HexDirection dir = HexDirection.NE; dir <= HexDirection.NW; dir++)
+        {
+            HexCell neighbor = hexCell.GetNeighbour(dir);
+            if (neighbor == null)
+            {
+                continue;
+            }
+
+            ClimateData neighbourClimateData = m_nextClimateData[neighbor.CellIndex];
+            if (dir == mainDispersalDirection)
+            {
+                neighbourClimateData.clouds += cloudDispersion * WindStrength;
+            }
+            else
+            {
+                neighbourClimateData.clouds += cloudDispersion;
+            }
+
+            int elevationDelta = neighbor.ViewElevation - hexCell.ViewElevation;
+            if (elevationDelta < 0)
+            {
+                climateData.moisture -= runoff;
+                neighbourClimateData.moisture += runoff;
+            }
+            else if (elevationDelta == 0)
+            {
+                climateData.moisture -= seepage;
+                neighbourClimateData.moisture += seepage;
+
+            }
+
+            m_nextClimateData[neighbor.CellIndex] = neighbourClimateData;
+        }
+
+        ClimateData nextCellClimateData = m_nextClimateData[hexCell.CellIndex];
+        nextCellClimateData.moisture += climateData.moisture;
+        nextCellClimateData.moisture = Mathf.Min(1f, nextCellClimateData.moisture);
+
+        m_nextClimateData[hexCell.CellIndex] = nextCellClimateData;
+        m_climateData[hexCell.CellIndex] = new ClimateData();
+
+    }
+
+
 }
 
 
@@ -418,3 +573,10 @@ public struct MapRegion
     public int zMax;
 }
 
+
+
+public struct ClimateData
+{
+    public float clouds;
+    public float moisture;
+}

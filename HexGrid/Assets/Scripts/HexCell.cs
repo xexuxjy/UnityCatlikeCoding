@@ -697,4 +697,9 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
         }
     }
 
+    public void SetMapData(float value)
+    {
+        HexCellDataShader.SetMapData(this, value);
+    }
+
 }

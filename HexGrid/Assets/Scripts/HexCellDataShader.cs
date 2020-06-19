@@ -151,6 +151,12 @@ public class HexCellDataShader : MonoBehaviour
         return stillUpdating;
     }
 
+    public void SetMapData(HexCell hexCell, float data)
+    {
+        m_cellTextureData[hexCell.CellIndex].b = data < 0f ? (byte)0 : (data < 1f ? (byte)(data * 254f) : (byte)254);
+        enabled = true;
+    }
+
     private bool m_needsVisibilityReset;
     public void ViewElevationChanged()
     {
