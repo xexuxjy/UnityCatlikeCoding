@@ -28,7 +28,7 @@
         #pragma multi_compile _ HEX_MAP_EDIT_MODE
 
         #include "HexCellData.cginc"
-
+        #include "HexCellData.cginc"
 
         sampler2D _MainTex;
 
@@ -65,7 +65,7 @@
         void surf (Input IN, inout SurfaceOutputStandardSpecular o)
         {
 
-			float4 noise = tex2D(_MainTex, IN.worldPos.xz * 0.025f);
+			float4 noise = tex2D(_MainTex, IN.worldPos.xz * (3 * TILING_SCALE));
 			fixed4 c = _Color * ((noise.y * 0.75f + 0.25f) * IN.visibility.x);
             float explored = IN.visibility.y;
 

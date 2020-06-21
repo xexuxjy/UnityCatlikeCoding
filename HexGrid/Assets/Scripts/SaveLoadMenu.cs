@@ -83,7 +83,7 @@ public class SaveLoadMenu : MonoBehaviour
                 binReader.ReadInt32();
                 int x = binReader.ReadInt32();
                 int z = binReader.ReadInt32();
-                HexGrid.CreateMap(x, z);
+                HexGrid.CreateMap(x, z,HexMetrics.Wrap);
                 HexGrid.Load(binReader);
                 HexMapCamera.ValidatePosition();
             }

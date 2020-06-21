@@ -120,7 +120,7 @@ public class HexMapGenerator : MonoBehaviour
     private List<ClimateData> m_climateData = new List<ClimateData>();
     private List<ClimateData> m_nextClimateData = new List<ClimateData>();
 
-    public void GenerateMap(int x, int z)
+    public void GenerateMap(int x, int z,bool wrap)
     {
         Random.State originalRandomState = Random.state;
         if (!UseFixedSeed)
@@ -132,7 +132,7 @@ public class HexMapGenerator : MonoBehaviour
         }
         Random.InitState(Seed);
 
-        HexGrid.CreateMap(x, z);
+        HexGrid.CreateMap(x, z, wrap);
         if (m_hexCellPriorityQueue == null)
         {
             m_hexCellPriorityQueue = new HexCellPriorityQueue();
@@ -162,11 +162,17 @@ public class HexMapGenerator : MonoBehaviour
         m_mapRegions.Clear();
         MapRegion region = new MapRegion();
 
+        int borderX = HexGrid.Wrap ? RegionBorder : MapBorderX;
+
         switch (RegionCount)
         {
             default:
-                region.xMin = MapBorderX;
-                region.xMax = HexGrid.CellCountX - MapBorderX;
+                if (HexGrid.Wrap)
+                {
+                    borderX = 0;
+                }
+                region.xMin = borderX;
+                region.xMax = HexGrid.CellCountX - borderX;
                 region.zMin = MapBorderZ;
                 region.zMax = HexGrid.CellCountZ - MapBorderZ;
                 m_mapRegions.Add(region);
@@ -174,19 +180,24 @@ public class HexMapGenerator : MonoBehaviour
             case 2:
                 if (Random.value < 0.5f)
                 {
-                    region.xMin = MapBorderX;
+                    region.xMin = borderX;
                     region.xMax = HexGrid.CellCountX / 2 - RegionBorder;
                     region.zMin = MapBorderZ;
                     region.zMax = HexGrid.CellCountZ - MapBorderZ;
                     m_mapRegions.Add(region);
                     region.xMin = HexGrid.CellCountX / 2 + RegionBorder;
-                    region.xMax = HexGrid.CellCountX - MapBorderX;
+                    region.xMax = HexGrid.CellCountX - borderX;
                     m_mapRegions.Add(region);
                 }
                 else
                 {
-                    region.xMin = MapBorderX;
-                    region.xMax = HexGrid.CellCountX - MapBorderX;
+                    if (HexGrid.Wrap)
+                    {
+                        borderX = 0;
+                    }
+
+                    region.xMin = borderX;
+                    region.xMax = HexGrid.CellCountX - borderX;
                     region.zMin = MapBorderZ;
                     region.zMax = HexGrid.CellCountZ / 2 - RegionBorder;
                     m_mapRegions.Add(region);
@@ -196,7 +207,7 @@ public class HexMapGenerator : MonoBehaviour
                 }
                 break;
             case 3:
-                region.xMin = MapBorderX;
+                region.xMin = borderX;
                 region.xMax = HexGrid.CellCountX / 3 - RegionBorder;
                 region.zMin = MapBorderZ;
                 region.zMax = HexGrid.CellCountZ - MapBorderZ;
@@ -205,22 +216,22 @@ public class HexMapGenerator : MonoBehaviour
                 region.xMax = HexGrid.CellCountX * 2 / 3 - RegionBorder;
                 m_mapRegions.Add(region);
                 region.xMin = HexGrid.CellCountX * 2 / 3 + RegionBorder;
-                region.xMax = HexGrid.CellCountX - MapBorderX;
+                region.xMax = HexGrid.CellCountX - borderX;
                 m_mapRegions.Add(region);
                 break;
             case 4:
-                region.xMin = MapBorderX;
+                region.xMin = borderX;
                 region.xMax = HexGrid.CellCountX / 2 - RegionBorder;
                 region.zMin = MapBorderZ;
                 region.zMax = HexGrid.CellCountZ / 2 - RegionBorder;
                 m_mapRegions.Add(region);
                 region.xMin = HexGrid.CellCountX / 2 + RegionBorder;
-                region.xMax = HexGrid.CellCountX - MapBorderX;
+                region.xMax = HexGrid.CellCountX - borderX;
                 m_mapRegions.Add(region);
                 region.zMin = HexGrid.CellCountZ / 2 + RegionBorder;
                 region.zMax = HexGrid.CellCountZ - MapBorderZ;
                 m_mapRegions.Add(region);
-                region.xMin = MapBorderX;
+                region.xMin = borderX;
                 region.xMax = HexGrid.CellCountX / 2 - RegionBorder;
                 m_mapRegions.Add(region);
                 break;

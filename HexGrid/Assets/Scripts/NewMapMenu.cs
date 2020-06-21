@@ -7,12 +7,17 @@ public class NewMapMenu : MonoBehaviour
 {
     public HexGrid HexGrid;
     public HexMapGenerator HexMapGenerator;
-
+    private bool m_wrap = true;
 
     public void Open()
     {
         HexMapCamera.Locked = true;
         gameObject.SetActive(true);
+    }
+
+    public void ToggleWrap(bool value)
+    {
+        m_wrap = value;
     }
 
     public void Close()
@@ -46,11 +51,11 @@ public class NewMapMenu : MonoBehaviour
     {
         if(m_generateMaps)
         {
-            HexMapGenerator.GenerateMap(x, z);
+            HexMapGenerator.GenerateMap(x, z, m_wrap);
         }
         else
         {
-            HexGrid.CreateMap(x, z);
+            HexGrid.CreateMap(x, z, m_wrap);
         }
         
         HexMapCamera.ValidatePosition();

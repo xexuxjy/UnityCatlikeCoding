@@ -40,6 +40,7 @@ public class HexUnit : MonoBehaviour
 			HexGrid.IncreaseVisibilty(m_location, VisionRange);
 			transform.localPosition = m_location.Position;
 			m_location.HexUnit = this;
+			HexGrid.MakeChildOfColumn(transform, value.ColumnIndex);
 		}
 	}
 
@@ -115,16 +116,41 @@ public class HexUnit : MonoBehaviour
 			Vector3 c = a;
 			transform.localPosition = c;
 			yield return LookAt(m_moveList[1].Position);
-			HexGrid.DecreaseVisibilty(m_currentTravelLocation != null ? m_currentTravelLocation :  m_moveList[0], VisionRange);
 
+			if (m_currentTravelLocation = null)
+			{
+				m_currentTravelLocation = m_moveList[0];
+			}
+			HexGrid.DecreaseVisibilty(m_currentTravelLocation, VisionRange);
+			int currentColumn = m_currentTravelLocation.ColumnIndex;
 
 			for (int i = 1; i < m_moveList.Count; ++i)
 			{
 				m_currentTravelLocation = m_moveList[i]; 
 				a = c;
 				b = m_moveList[i - 1].Position;
+				int nextColumn = m_currentTravelLocation.ColumnIndex;
+				if (currentColumn != nextColumn)
+				{
+					if (nextColumn < currentColumn - 1)
+					{
+						a.x -= HexMetrics.InnerDiameter * HexMetrics.WrapSize;
+						b.x -= HexMetrics.InnerDiameter * HexMetrics.WrapSize;
+					}
+					else if (nextColumn > currentColumn + 1)
+					{
+						a.x += HexMetrics.InnerDiameter * HexMetrics.WrapSize;
+						b.x += HexMetrics.InnerDiameter * HexMetrics.WrapSize;
+					}
+
+
+					HexGrid.MakeChildOfColumn(transform, nextColumn);
+					currentColumn = nextColumn;
+				}
 				c = (b + m_currentTravelLocation.Position) * 0.5f;
 				HexGrid.IncreaseVisibilty(m_currentTravelLocation, VisionRange);
+
+
 				yield return MoveStep(a, b,c);
 				HexGrid.DecreaseVisibilty(m_currentTravelLocation, VisionRange);
 			}
@@ -181,6 +207,20 @@ public class HexUnit : MonoBehaviour
 	const float m_rotationSpeed = 180;
 	public IEnumerator LookAt(Vector3 point)
 	{
+		if (HexGrid.Wrap)
+		{
+			float xDistance = point.x - transform.localPosition.x;
+			if (xDistance < -HexMetrics.InnerRadius * HexMetrics.WrapSize)
+			{
+				point.x += HexMetrics.InnerRadius * HexMetrics.WrapSize;
+			}
+			else if (xDistance > HexMetrics.InnerRadius * HexMetrics.WrapSize)
+			{
+				point.x = HexMetrics.InnerRadius * HexMetrics.WrapSize;
+			}
+		}
+
+
 		point.y = transform.localPosition.y;
 
 		Quaternion fromRotation = transform.localRotation;

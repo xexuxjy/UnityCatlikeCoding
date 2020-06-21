@@ -35,6 +35,9 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
         private set { m_explored = value; }
     }
 
+    public int ColumnIndex
+    { get; set; }
+
     public bool IsExplorable
     { get; set; }
 

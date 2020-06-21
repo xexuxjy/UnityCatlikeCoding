@@ -237,7 +237,7 @@ public class HexGridChunk : MonoBehaviour
 
         }
     }
-    public void TriangulateWaterShore(HexDirection dir, HexCell cell, HexCell neighbour, Vector3 center)
+    public void TriangulateWaterShore(HexDirection dir, HexCell hexCell, HexCell neighbour, Vector3 center)
     {
         EdgeVertices edges1 = new EdgeVertices(center + HexMetrics.GetFirstWaterCorner(dir), center + HexMetrics.GetSecondWaterCorner(dir));
         Water.AddTriangle(center, edges1.v1, edges1.v2);
@@ -245,7 +245,7 @@ public class HexGridChunk : MonoBehaviour
         Water.AddTriangle(center, edges1.v3, edges1.v4);
         Water.AddTriangle(center, edges1.v4, edges1.v5);
 
-        Vector3 indices = new Vector3(cell.CellIndex, cell.CellIndex, cell.CellIndex);
+        Vector3 indices = new Vector3(hexCell.CellIndex, hexCell.CellIndex, hexCell.CellIndex);
         Water.AddTriangleCellData(indices, Weights1);
         Water.AddTriangleCellData(indices, Weights1);
         Water.AddTriangleCellData(indices, Weights1);
@@ -253,14 +253,22 @@ public class HexGridChunk : MonoBehaviour
 
         Vector3 center2 = neighbour.Position;
         center2.y = center.y;
+        if (neighbour.ColumnIndex < hexCell.ColumnIndex - 1)
+        {
+            center2.x += HexMetrics.WrapSize * HexMetrics.InnerDiameter;
+        }
+        else if (neighbour.ColumnIndex > hexCell.ColumnIndex + 1)
+        {
+            center2.x -= HexMetrics.WrapSize * HexMetrics.InnerDiameter;
+        }
 
 
         Vector3 bridge = HexMetrics.GetWaterBridge(dir);
         EdgeVertices edges2 = new EdgeVertices(center2 + HexMetrics.GetSecondSolidCorner(dir.Opposite()), center2 + HexMetrics.GetFirstSolidCorner(dir.Opposite()));
 
-        if (cell.HasRiverThroughEdge(dir))
+        if (hexCell.HasRiverThroughEdge(dir))
         {
-            TriangulateEstuary(edges1, edges2,cell.IncomingRiverDirection == dir,indices);
+            TriangulateEstuary(edges1, edges2,hexCell.IncomingRiverDirection == dir,indices);
         }
         else
         {
@@ -282,10 +290,20 @@ public class HexGridChunk : MonoBehaviour
 
 
 
-            HexCell nextNeighbour = cell.GetNeighbour(dir.Next());
+            HexCell nextNeighbour = hexCell.GetNeighbour(dir.Next());
             if (nextNeighbour != null)
             {
-                Vector3 v3 = nextNeighbour.Position + (nextNeighbour.IsUnderwater ? HexMetrics.GetFirstWaterCorner(dir.Previous()) : HexMetrics.GetFirstSolidCorner(dir.Previous()));
+                Vector3 center3 = nextNeighbour.Position;
+                if (nextNeighbour.ColumnIndex < hexCell.ColumnIndex - 1)
+                {
+                    center3.x += HexMetrics.WrapSize * HexMetrics.InnerDiameter;
+                }
+                else if (nextNeighbour.ColumnIndex > hexCell.ColumnIndex + 1)
+                {
+                    center3.x -= HexMetrics.WrapSize * HexMetrics.InnerDiameter;
+                }
+
+                Vector3 v3 = center3 + (nextNeighbour.IsUnderwater ? HexMetrics.GetFirstWaterCorner(dir.Previous()) : HexMetrics.GetFirstSolidCorner(dir.Previous()));
                 v3.y = center.y;
 
 

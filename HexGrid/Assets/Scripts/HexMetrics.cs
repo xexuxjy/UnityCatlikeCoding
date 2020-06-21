@@ -10,6 +10,8 @@ public static class HexMetrics
 
     public const float OuterRadius = 10.0f;
     public const float InnerRadius = OuterRadius * OuterToInner;
+    public const float InnerDiameter = InnerRadius * 2f;
+
 
     public const float SolidFactor = 0.75f;
     public const float BlendFactor = 1.0f - SolidFactor;
@@ -56,6 +58,10 @@ public static class HexMetrics
     public const  int  HashGridSize = 256;
     public const float HashGridScale = 0.25f;
     static HexHash[] m_hashGrid = null;
+
+    public static int WrapSize;
+    public static bool Wrap
+    { get { return WrapSize > 0; } }
 
     public static void InitialiseHashGrid(int seed)
     {
@@ -190,7 +196,13 @@ public static class HexMetrics
 
     public static Vector4 SampleNoise(Vector3 position)
     {
-        return NoiseSource.GetPixelBilinear(position.x * NoiseScale, position.z* NoiseScale);
+        Vector4 sample = NoiseSource.GetPixelBilinear(position.x * NoiseScale, position.z * NoiseScale);
+        if (Wrap && position.x < InnerDiameter * 1.5f)
+        {
+            Vector4 sample2 = NoiseSource.GetPixelBilinear((position.x + WrapSize * InnerDiameter) * NoiseScale, position.z * NoiseScale);
+            sample = Vector4.Lerp(sample2, sample, position.x * (1f / InnerDiameter)-0.5f);
+        }
+        return sample;
     }
 
     public static Vector3 GetSolidEdgeMiddle(HexDirection dir)
