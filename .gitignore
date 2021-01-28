@@ -3,6 +3,8 @@ HexGrid/.vs/CatLikeCodingHexGrid/v15/.suo
 *.db
 HexGrid/.vs/CatLikeCodingHexGrid/v15/Browse.VC.opendb
 HexGrid/.vs/CatLikeCodingHexGrid/v15/Server/sqlite3/storage.ide-shm
-HexGrid/Logs/Packages-Update.log
-HexGrid/Assembly-CSharp-Editor.csproj
-HexGrid/Assembly-CSharp.csproj
+*/Logs/Packages-Update.log
+Assembly-CSharp-Editor.csproj
+Assembly-CSharp.csproj
+obj
+*/Library
