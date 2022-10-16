@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 [RequireComponent(typeof(MeshFilter), typeof(MeshRenderer))]
 public class HexMesh : MonoBehaviour, IHexMeshChunkModule
@@ -43,7 +41,7 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
         }
         m_indices = ListPool<int>.Get();
 
-        if(UseUVs)
+        if (UseUVs)
         {
             m_uvs = ListPool<Vector2>.Get();
         }
@@ -64,16 +62,16 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
             m_hexMesh.SetColors(m_cellWeights);
             ListPool<Color>.Return(m_cellWeights);
             m_hexMesh.SetUVs(2, m_cellIndices);
-            ListPool<Vector3>.Return (m_cellIndices);
+            ListPool<Vector3>.Return(m_cellIndices);
         }
 
         m_hexMesh.SetTriangles(m_indices, 0);
         ListPool<int>.Return(m_indices);
         m_hexMesh.RecalculateNormals();
 
-        if(m_uvs != null)
+        if (m_uvs != null)
         {
-            m_hexMesh.SetUVs(0,m_uvs);
+            m_hexMesh.SetUVs(0, m_uvs);
             ListPool<Vector2>.Return(m_uvs);
         }
 
@@ -121,15 +119,15 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
 
     }
 
-    public void AddTriangleCellData(Vector3 indices,Color weights1,Color weights2,Color weights3)
+    public void AddTriangleCellData(Vector3 indices, Color weights1, Color weights2, Color weights3)
     {
-        if(m_cellIndices != null)
+        if (m_cellIndices != null)
         {
             m_cellIndices.Add(indices);
             m_cellIndices.Add(indices);
             m_cellIndices.Add(indices);
         }
-        
+
         if (m_cellWeights != null)
         {
             m_cellWeights.Add(weights1);
@@ -150,7 +148,7 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
         }
     }
 
-    public void AddQuadUV(Vector2 v1, Vector2 v2, Vector2 v3,Vector2 v4)
+    public void AddQuadUV(Vector2 v1, Vector2 v2, Vector2 v3, Vector2 v4)
     {
         if (m_uvs != null)
         {
@@ -205,7 +203,7 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
     }
 
 
-    public void AddQuadCellData(Vector3 indices,Color c1)
+    public void AddQuadCellData(Vector3 indices, Color c1)
     {
         AddQuadCellData(indices, c1, c1, c1, c1);
     }
@@ -215,7 +213,7 @@ public class HexMesh : MonoBehaviour, IHexMeshChunkModule
         AddQuadCellData(indices, c1, c1, c2, c2);
     }
 
-    public void AddQuadCellData(Vector3 indices,Color c1, Color c2, Color c3, Color c4)
+    public void AddQuadCellData(Vector3 indices, Color c1, Color c2, Color c3, Color c4)
     {
         if (m_cellIndices != null)
         {

@@ -1,4 +1,4 @@
 ﻿public enum OptionalToggle
 {
-    Ignore,Yes,No
+    Ignore, Yes, No
 }

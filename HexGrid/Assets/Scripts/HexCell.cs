@@ -1,13 +1,9 @@
-﻿using C5;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HexCell : MonoBehaviour , IComparable<HexCell>
+public class HexCell : MonoBehaviour, IComparable<HexCell>
 {
     public HexCoordinates Coordinates;
     public RectTransform UIRectTransform;
@@ -22,7 +18,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
 
 
     [SerializeField]
-    bool[] m_roads = new bool[6] ;
+    bool[] m_roads = new bool[6];
 
     [SerializeField]
     HexCell[] m_neighbours = new HexCell[6];
@@ -85,17 +81,17 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
 
     public void RemoveOutgoingRiver()
     {
-        if(HasOutgoingRiver)
+        if (HasOutgoingRiver)
         {
             m_hasOutgoingRiver = false;
             RefreshSelfOnly();
 
             HexCell neighbour = GetNeighbour(OutgoingRiverDirection);
-            if(neighbour)
+            if (neighbour)
             {
                 neighbour.m_hasIncomingRiver = false;
                 neighbour.RefreshSelfOnly();
-            }   
+            }
         }
     }
 
@@ -125,18 +121,18 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
 
     public void SetOutgoingRiver(HexDirection dir)
     {
-        if(HasOutgoingRiver && OutgoingRiverDirection == dir)
+        if (HasOutgoingRiver && OutgoingRiverDirection == dir)
         {
             return;
         }
         HexCell neighbour = GetNeighbour(dir);
-        if(!IsValidRiverDestination(neighbour))
+        if (!IsValidRiverDestination(neighbour))
         {
             return;
         }
 
         RemoveOutgoingRiver();
-        if(HasIncomingRiver && IncomingRiverDirection == dir)
+        if (HasIncomingRiver && IncomingRiverDirection == dir)
         {
             // replace incoming with outgoing.
             RemoveIncomingRiver();
@@ -160,7 +156,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     private void RefreshSelfOnly()
     {
         GridChunk.Refresh();
-        if(HexUnit != null)
+        if (HexUnit != null)
         {
             HexUnit.ValidateLocation();
         }
@@ -214,13 +210,13 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     }
 
 
-    private int m_elevation= int.MinValue;
+    private int m_elevation = int.MinValue;
     public int Elevation
     {
         get { return m_elevation; }
         set
         {
-            if(m_elevation == value)
+            if (m_elevation == value)
             {
                 return;
             }
@@ -229,7 +225,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
 
             m_elevation = value;
 
-            if(originalViewElevation != ViewElevation)
+            if (originalViewElevation != ViewElevation)
             {
                 HexCellDataShader.ViewElevationChanged();
             }
@@ -310,14 +306,14 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
 
     public Vector3 Position
     {
-        get {return transform.localPosition; }
+        get { return transform.localPosition; }
     }
 
     public float StreamBedY
     {
         get
         {
-            return (Elevation + HexMetrics.StreamBedElevationOffset) *HexMetrics.ElevationStep;
+            return (Elevation + HexMetrics.StreamBedElevationOffset) * HexMetrics.ElevationStep;
         }
     }
 
@@ -325,7 +321,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     {
         get
         {
-            return (Elevation + HexMetrics.WaterElevationOffset) *HexMetrics.ElevationStep;
+            return (Elevation + HexMetrics.WaterElevationOffset) * HexMetrics.ElevationStep;
         }
     }
 
@@ -333,7 +329,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     {
         get
         {
-            return (WaterLevel + HexMetrics.WaterElevationOffset) *HexMetrics.ElevationStep;
+            return (WaterLevel + HexMetrics.WaterElevationOffset) * HexMetrics.ElevationStep;
         }
     }
 
@@ -377,37 +373,37 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
 
     public void AddRoad(HexDirection dir)
     {
-        if(HasRoadThroughEdge(dir))
+        if (HasRoadThroughEdge(dir))
         {
             return;
         }
 
-        if(HasRiverThroughEdge(dir))
+        if (HasRiverThroughEdge(dir))
         {
             return;
         }
-        if(GetEleveationDifference(dir) > HexMetrics.MaxRoadElevationDifference)
-        {
-            return;
-        }
-
-        if(HasSpecialFeature || GetNeighbour(dir).HasSpecialFeature)
+        if (GetEleveationDifference(dir) > HexMetrics.MaxRoadElevationDifference)
         {
             return;
         }
 
-        if(!HasRoadThroughEdge(dir) && !HasRiverThroughEdge(dir) && GetEleveationDifference(dir) <= HexMetrics.MaxRoadElevationDifference)
+        if (HasSpecialFeature || GetNeighbour(dir).HasSpecialFeature)
+        {
+            return;
+        }
+
+        if (!HasRoadThroughEdge(dir) && !HasRiverThroughEdge(dir) && GetEleveationDifference(dir) <= HexMetrics.MaxRoadElevationDifference)
         {
             SetRoad((int)dir, true);
         }
     }
 
-    private void SetRoad(int index,bool value)
+    private void SetRoad(int index, bool value)
     {
         m_roads[index] = value;
         HexDirection opposite = ((HexDirection)index).Opposite();
         //m_neighbours[index].SetRoad((int)opposite, value);
-        m_neighbours[index].m_roads[(int)opposite] =  value;
+        m_neighbours[index].m_roads[(int)opposite] = value;
         m_neighbours[index].RefreshSelfOnly();
         RefreshSelfOnly();
 
@@ -434,11 +430,11 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
 
     private void ValidateRivers()
     {
-        if(HasOutgoingRiver && !IsValidRiverDestination(GetNeighbour(OutgoingRiverDirection)))
+        if (HasOutgoingRiver && !IsValidRiverDestination(GetNeighbour(OutgoingRiverDirection)))
         {
             RemoveOutgoingRiver();
         }
-        if(HasIncomingRiver && !GetNeighbour(IncomingRiverDirection).IsValidRiverDestination(this))
+        if (HasIncomingRiver && !GetNeighbour(IncomingRiverDirection).IsValidRiverDestination(this))
         {
             RemoveIncomingRiver();
         }
@@ -496,9 +492,9 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     public bool Walled
     {
         get { return m_walled; }
-        set 
-        { 
-            if(m_walled != value)
+        set
+        {
+            if (m_walled != value)
             {
                 m_walled = value;
                 Refresh();
@@ -600,7 +596,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
         binWriter.Write((byte)m_incomingRiverDirection);
         binWriter.Write(m_hasOutgoingRiver);
         binWriter.Write((byte)m_outgoingRiverDirection);
-        for(int i=0;i<m_roads.Length;++i)
+        for (int i = 0; i < m_roads.Length; ++i)
         {
             binWriter.Write(m_roads[i]);
         }
@@ -630,13 +626,13 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
 
     public int CompareTo(HexCell other)
     {
-        if(other != null)
+        if (other != null)
         {
             return SearchPriority.CompareTo(other.SearchPriority);
         }
         return 0;
     }
-    
+
     public int SearchHeuristic { get; set; }
 
     public int SearchPriority
@@ -675,7 +671,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
     public void IncreaseVisibility()
     {
         m_visibilityCount++;
-        if(m_visibilityCount == 1)
+        if (m_visibilityCount == 1)
         {
             IsExplored = true;
             HexCellDataShader.RefreshVisibility(this);
@@ -693,7 +689,7 @@ public class HexCell : MonoBehaviour , IComparable<HexCell>
 
     public void ResetVisability()
     {
-        if(m_visibilityCount > 0)
+        if (m_visibilityCount > 0)
         {
             m_visibilityCount = 0;
             HexCellDataShader.RefreshVisibility(this);

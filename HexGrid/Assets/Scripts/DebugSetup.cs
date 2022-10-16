@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DebugSetup : MonoBehaviour
 {
@@ -55,7 +53,7 @@ public class DebugSetup : MonoBehaviour
                 BuildRiverOrRoad(mapEditor, NumRoads, 8, 15, true);
             }
 
-            if(Water)
+            if (Water)
             {
                 for (int i = 0; i < NumWater; ++i)
                 {
@@ -77,7 +75,7 @@ public class DebugSetup : MonoBehaviour
             mapEditor.SetRiverMode((int)OptionalToggle.Ignore);
             mapEditor.SetRoadMode((int)OptionalToggle.Ignore);
 
-            for (int i=0;i< UrbanFeatureIterations;++i)
+            for (int i = 0; i < UrbanFeatureIterations; ++i)
             {
                 HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
                 hexCell.UrbanDensityLevel = Random.Range(1, 4);
@@ -85,7 +83,7 @@ public class DebugSetup : MonoBehaviour
                 hexCell.PlantDensityLevel = Random.Range(1, 4);
             }
 
-            for(int i=0;i<NumWalls;++i)
+            for (int i = 0; i < NumWalls; ++i)
             {
                 HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
                 hexCell.Walled = true;
@@ -98,7 +96,7 @@ public class DebugSetup : MonoBehaviour
             }
 
 
-            for (int i = 0; i < NumUnits;++i)
+            for (int i = 0; i < NumUnits; ++i)
             {
                 HexCell hexCell = mapEditor.HexGrid.GetRandomCell();
                 mapEditor.CreateUnit(hexCell);

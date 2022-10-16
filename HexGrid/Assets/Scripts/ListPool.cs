@@ -7,7 +7,7 @@ public static class ListPool<T>
 
     public static List<T> Get()
     {
-        if(m_stack.Count > 0)
+        if (m_stack.Count > 0)
         {
             return m_stack.Pop();
         }

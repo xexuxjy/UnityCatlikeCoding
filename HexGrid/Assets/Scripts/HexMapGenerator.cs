@@ -1,7 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Runtime.InteropServices;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
@@ -120,7 +117,7 @@ public class HexMapGenerator : MonoBehaviour
     private List<ClimateData> m_climateData = new List<ClimateData>();
     private List<ClimateData> m_nextClimateData = new List<ClimateData>();
 
-    public void GenerateMap(int x, int z,bool wrap)
+    public void GenerateMap(int x, int z, bool wrap)
     {
         Random.State originalRandomState = Random.state;
         if (!UseFixedSeed)
@@ -815,7 +812,7 @@ public class HexMapGenerator : MonoBehaviour
                     m_flowDirections.Add(dir);
                 }
 
-                 m_flowDirections.Add(dir);
+                m_flowDirections.Add(dir);
             }
 
             if (m_flowDirections.Count == 0)
@@ -873,7 +870,7 @@ public class HexMapGenerator : MonoBehaviour
         float jitter = HexMetrics.SampleNoise(hexCell.Position * 0.1f)[m_temperatureJitterChannel];
         temperature *= 1f - (hexCell.ViewElevation - WaterLevel) / (ElevationMaximum - (WaterLevel + 1f));
 
-        temperature += ( jitter * 2f - 1f);
+        temperature += (jitter * 2f - 1f);
 
         return temperature;
     }
@@ -910,7 +907,7 @@ public struct Biome
     public int terrain;
     public int plant;
 
-    public Biome(int _terrain,int _plant)
+    public Biome(int _terrain, int _plant)
     {
         terrain = _terrain;
         plant = _plant;

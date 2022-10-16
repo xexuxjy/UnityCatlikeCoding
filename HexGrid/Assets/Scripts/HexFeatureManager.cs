@@ -38,7 +38,7 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
     {
         if (level > 0)
         {
-            float[] chances = HexMetrics.GetFeatureThresholds(level-1);
+            float[] chances = HexMetrics.GetFeatureThresholds(level - 1);
             for (int i = 0; i < chances.Length; ++i)
             {
                 if (hash < chances[i])
@@ -52,7 +52,7 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
 
     public void AddFeature(HexCell cell, Vector3 position)
     {
-        if(cell.HasSpecialFeature)
+        if (cell.HasSpecialFeature)
         {
             return;
         }
@@ -66,7 +66,7 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
 
         Transform urbanFeature = PickFeaturePrefab(UrbanFeatureCollections, cell.UrbanDensityLevel, hexHash.a, hexHash.choice);
         Transform farmFeature = PickFeaturePrefab(FarmFeatureCollections, cell.FarmDensityLevel, hexHash.b, hexHash.choice);
-        Transform plantFeature = PickFeaturePrefab(PlantFeatureCollections, cell.PlantDensityLevel , hexHash.c, hexHash.choice);
+        Transform plantFeature = PickFeaturePrefab(PlantFeatureCollections, cell.PlantDensityLevel, hexHash.c, hexHash.choice);
 
         float defaultMax = 1000;
         Transform chosenTransform = null;
@@ -95,21 +95,21 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
         }
     }
 
-    public void AddWall(EdgeVertices nearEdges, HexCell nearCell, EdgeVertices farEdges, HexCell farCell,bool hasRoad,bool hasRiver)
+    public void AddWall(EdgeVertices nearEdges, HexCell nearCell, EdgeVertices farEdges, HexCell farCell, bool hasRoad, bool hasRiver)
     {
         // simple guards.
-        if(nearCell.IsUnderwater || farCell.IsUnderwater)
+        if (nearCell.IsUnderwater || farCell.IsUnderwater)
         {
             return;
         }
 
-        if(nearCell.GetEdgeType(farCell) == HexEdgeType.Cliff)
+        if (nearCell.GetEdgeType(farCell) == HexEdgeType.Cliff)
         {
             return;
         }
 
 
-        if(nearCell.Walled != farCell.Walled)
+        if (nearCell.Walled != farCell.Walled)
         {
             AddWallSegment(nearEdges.v1, farEdges.v1, nearEdges.v2, farEdges.v2);
             if (hasRoad || hasRiver)
@@ -126,7 +126,7 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
         }
     }
 
-    public void AddWall(Vector3 c1,HexCell cell1,Vector3 c2, HexCell cell2, Vector3 c3, HexCell cell3)
+    public void AddWall(Vector3 c1, HexCell cell1, Vector3 c2, HexCell cell2, Vector3 c3, HexCell cell3)
     {
         if (cell1.Walled)
         {
@@ -164,9 +164,9 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
     }
 
 
-    public void AddWallSegment(Vector3 pivot,HexCell pivotCell,Vector3 left,HexCell leftCell,Vector3 right,HexCell rightCell)
+    public void AddWallSegment(Vector3 pivot, HexCell pivotCell, Vector3 left, HexCell leftCell, Vector3 right, HexCell rightCell)
     {
-        if(pivotCell.IsUnderwater)
+        if (pivotCell.IsUnderwater)
         {
             return;
         }
@@ -211,7 +211,7 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
 
     }
 
-    public void AddWallSegment(Vector3 nearLeft,Vector3 farLeft,Vector3 nearRight,Vector3 farRight,bool addTower = false)
+    public void AddWallSegment(Vector3 nearLeft, Vector3 farLeft, Vector3 nearRight, Vector3 farRight, bool addTower = false)
     {
         nearLeft = HexMetrics.PerturbVector(nearLeft);
         farLeft = HexMetrics.PerturbVector(farLeft);
@@ -247,7 +247,7 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
         v4.y = rightTop;
 
         Walls.AddQuadUnperturbed(v2, v1, v4, v3);
-        
+
         // top
         Walls.AddQuadUnperturbed(t1, t2, v3, v4);
 
@@ -262,7 +262,7 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
         }
     }
 
-    public void AddWallCap(Vector3 near,Vector3 far)
+    public void AddWallCap(Vector3 near, Vector3 far)
     {
         near = HexMetrics.PerturbVector(near);
         far = HexMetrics.PerturbVector(far);
@@ -303,7 +303,7 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
     }
 
 
-    public void AddBridge(Vector3 roadCenter1,Vector3 roadCenter2)
+    public void AddBridge(Vector3 roadCenter1, Vector3 roadCenter2)
     {
         roadCenter1 = HexMetrics.PerturbVector(roadCenter1);
         roadCenter2 = HexMetrics.PerturbVector(roadCenter2);
@@ -316,7 +316,7 @@ public class HexFeatureManager : MonoBehaviour, IHexMeshChunkModule
         Transform bridgeInstance = Instantiate(Bridge);
         bridgeInstance.transform.localPosition = (roadCenter1 + roadCenter2) * 0.5f;
         bridgeInstance.transform.forward = roadCenter2 - roadCenter1;
-        bridgeInstance.localScale = new Vector3 (1f,1f, bridgeScale);
+        bridgeInstance.localScale = new Vector3(1f, 1f, bridgeScale);
         bridgeInstance.SetParent(m_container, false);
     }
 

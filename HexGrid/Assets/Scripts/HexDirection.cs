@@ -1,10 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
-public enum HexDirection
+﻿public enum HexDirection
 {
-    NE,E,SE,SW,W,NW
+    NE, E, SE, SW, W, NW
 }
 
 
@@ -41,15 +37,15 @@ public static class HexDirectionExtensions
         return Adjust(direction, 2);
     }
 
-    public static HexDirection Adjust(HexDirection dir,int val)
+    public static HexDirection Adjust(HexDirection dir, int val)
     {
         int dirVal = (int)dir;
         dirVal += val;
-        if(dirVal < 0)
+        if (dirVal < 0)
         {
             dirVal += 6;
         }
-        if(dirVal > 5)
+        if (dirVal > 5)
         {
             dirVal -= 6;
         }

@@ -1,10 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using UnityEngine;
 
 [System.Serializable]
@@ -91,7 +86,7 @@ public struct HexCoordinates
 
     public int DistanceTo(HexCoordinates other)
     {
-        int xy = (X<other.X ? other.X - X : X -other.X) + (Y < other.Y ? other.Y - Y : Y - other.Y);
+        int xy = (X < other.X ? other.X - X : X - other.X) + (Y < other.Y ? other.Y - Y : Y - other.Y);
         if (HexMetrics.Wrap)
         {
             other.X += HexMetrics.WrapSize;
@@ -103,7 +98,7 @@ public struct HexCoordinates
             }
             else
             {
-                other.X -= 2* HexMetrics.WrapSize;
+                other.X -= 2 * HexMetrics.WrapSize;
                 xyWrapped = (X < other.X ? other.X - X : X - other.X) +
                      (Y < other.Y ? other.Y - Y : Y - other.Y);
                 if (xyWrapped < xy)

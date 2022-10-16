@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class HexMapCamera : MonoBehaviour
 {
@@ -64,13 +62,13 @@ public class HexMapCamera : MonoBehaviour
     void Update()
     {
         float zoomDelta = Input.GetAxis("Mouse ScrollWheel");
-        if(zoomDelta != 0.0f)
+        if (zoomDelta != 0.0f)
         {
             AdjustZoom(zoomDelta);
         }
 
-		float rotationDelta = Input.GetAxis("Rotation");
-        if(rotationDelta != 0.0f)
+        float rotationDelta = Input.GetAxis("Rotation");
+        if (rotationDelta != 0.0f)
         {
             AdjustRotation(rotationDelta);
         }
@@ -82,7 +80,7 @@ public class HexMapCamera : MonoBehaviour
             AdjustPosition(xDelta, zDelta);
         }
 
-        
+
 
 
     }
@@ -103,11 +101,11 @@ public class HexMapCamera : MonoBehaviour
     private void AdjustRotation(float rotationDelta)
     {
         m_rotationAngle += rotationDelta * RotationSpeed * Time.deltaTime;
-        if(m_rotationAngle < 0f)
+        if (m_rotationAngle < 0f)
         {
             m_rotationAngle += 360;
         }
-        if(m_rotationAngle > 360)
+        if (m_rotationAngle > 360)
         {
             m_rotationAngle -= 360;
         }
@@ -128,7 +126,7 @@ public class HexMapCamera : MonoBehaviour
 
         position += direction * damping * distance;
 
-        position = HexGrid.Wrap ? WrapPosition(position) :  ClampPosition(position);
+        position = HexGrid.Wrap ? WrapPosition(position) : ClampPosition(position);
 
         transform.localPosition = position;
 

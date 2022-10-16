@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Xml.Serialization;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class NewMapMenu : MonoBehaviour
 {
@@ -47,9 +44,9 @@ public class NewMapMenu : MonoBehaviour
         m_generateMaps = status;
     }
 
-    public void CreateMap(int x,int z)
+    public void CreateMap(int x, int z)
     {
-        if(m_generateMaps)
+        if (m_generateMaps)
         {
             HexMapGenerator.GenerateMap(x, z, m_wrap);
         }
@@ -57,7 +54,7 @@ public class NewMapMenu : MonoBehaviour
         {
             HexGrid.CreateMap(x, z, m_wrap);
         }
-        
+
         HexMapCamera.ValidatePosition();
         Close();
     }

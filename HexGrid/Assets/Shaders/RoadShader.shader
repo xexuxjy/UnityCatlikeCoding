@@ -28,7 +28,6 @@
         #pragma multi_compile _ HEX_MAP_EDIT_MODE
 
         #include "HexCellData.cginc"
-        #include "HexCellData.cginc"
 
         sampler2D _MainTex;
 

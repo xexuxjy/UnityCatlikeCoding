@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class HexCellDataShader : MonoBehaviour
@@ -33,7 +32,7 @@ public class HexCellDataShader : MonoBehaviour
 
         if (m_cellTexture != null)
         {
-            m_cellTexture.Resize(x, z);
+            m_cellTexture.Reinitialize(x, z);
         }
         else
         {
@@ -69,7 +68,7 @@ public class HexCellDataShader : MonoBehaviour
 
             m_cellTextureData[hexCell.CellIndex] = data;
         }
-        else if(m_cellTextureData[hexCell.CellIndex].b != 255)
+        else if (m_cellTextureData[hexCell.CellIndex].b != 255)
         {
             m_cellTextureData[hexCell.CellIndex].b = 255;
             m_transitioningCells.Add(hexCell);
@@ -79,13 +78,13 @@ public class HexCellDataShader : MonoBehaviour
 
     public HexGrid HexGrid
     {
-        get;set;
+        get; set;
     }
 
 
     public void LateUpdate()
     {
-        if(m_needsVisibilityReset)
+        if (m_needsVisibilityReset)
         {
             m_needsVisibilityReset = false;
             HexGrid.ResetVisability();
@@ -144,7 +143,7 @@ public class HexCellDataShader : MonoBehaviour
             data.r = (byte)Mathf.Max(t, 0);
         }
 
-        if(!stillUpdating)
+        if (!stillUpdating)
         {
             data.b = 0;
         }

@@ -60,7 +60,7 @@ public class SaveLoadMenu : MonoBehaviour
         for (int i = 0; i < paths.Length; i++)
         {
             SaveLoadItem item = Instantiate(SaveLaodItemPrefab);
-            item.Menu= this;
+            item.Menu = this;
             item.MapName = Path.GetFileNameWithoutExtension(paths[i]);
             item.transform.SetParent(ListContainer, false);
         }
@@ -83,7 +83,7 @@ public class SaveLoadMenu : MonoBehaviour
                 binReader.ReadInt32();
                 int x = binReader.ReadInt32();
                 int z = binReader.ReadInt32();
-                HexGrid.CreateMap(x, z,HexMetrics.Wrap);
+                HexGrid.CreateMap(x, z, HexMetrics.Wrap);
                 HexGrid.Load(binReader);
                 HexMapCamera.ValidatePosition();
             }

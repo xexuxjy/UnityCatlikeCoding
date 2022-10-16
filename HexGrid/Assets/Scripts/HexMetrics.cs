@@ -1,8 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public static class HexMetrics 
+public static class HexMetrics
 {
 
     public const float OuterToInner = 0.866025404f;
@@ -26,7 +24,7 @@ public static class HexMetrics
     public const int TerraceSteps = TerracesPerSlope * 2 + 1;
 
     public const float HorizontalTerraceStepSize = 1f / TerraceSteps;
-    public const float VerticalTerraceStepSize = 1f / (TerracesPerSlope +1);
+    public const float VerticalTerraceStepSize = 1f / (TerracesPerSlope + 1);
 
     public static Texture2D NoiseSource;
 
@@ -55,7 +53,7 @@ public static class HexMetrics
 
     public const float BridgeDesignLength = 7f;
 
-    public const  int  HashGridSize = 256;
+    public const int HashGridSize = 256;
     public const float HashGridScale = 0.25f;
     static HexHash[] m_hashGrid = null;
 
@@ -68,7 +66,7 @@ public static class HexMetrics
         Random.State currentState = Random.state;
         Random.InitState(seed);
         m_hashGrid = new HexHash[HashGridSize * HashGridSize];
-        for(int i=0;i<m_hashGrid.Length;++i)
+        for (int i = 0; i < m_hashGrid.Length; ++i)
         {
             m_hashGrid[i] = HexHash.Create();
         }
@@ -78,13 +76,13 @@ public static class HexMetrics
     public static HexHash SampleHashGrid(Vector3 position)
     {
         int x = (int)(position.x * HashGridScale) % HashGridSize;
-        if(x < 0)
+        if (x < 0)
         {
             x += HashGridSize;
         }
 
-        int z = (int)(position.z * HashGridScale)% HashGridSize;
-        if(z < 0)
+        int z = (int)(position.z * HashGridScale) % HashGridSize;
+        if (z < 0)
         {
             z += HashGridSize;
         }
@@ -149,7 +147,7 @@ public static class HexMetrics
     }
 
 
-    public static Vector3 TerraceLerp(Vector3 a, Vector3 b , int step)
+    public static Vector3 TerraceLerp(Vector3 a, Vector3 b, int step)
     {
         float h = step * HorizontalTerraceStepSize;
 
@@ -163,14 +161,14 @@ public static class HexMetrics
         return a;
     }
 
-    public static Color TerraceLerp(Color a,Color b,int step)
+    public static Color TerraceLerp(Color a, Color b, int step)
     {
         float h = step * HorizontalTerraceStepSize;
         return Color.Lerp(a, b, h);
     }
 
 
-    public static Vector3 WallLerp(Vector3 near,Vector3 far)
+    public static Vector3 WallLerp(Vector3 near, Vector3 far)
     {
         near.x += (far.x - near.x) * 0.5f;
         near.z += (far.z - near.z) * 0.5f;
@@ -180,13 +178,13 @@ public static class HexMetrics
         return near;
     }
 
-    public static HexEdgeType GetEdgeType(int elevation1,int elevation2)
+    public static HexEdgeType GetEdgeType(int elevation1, int elevation2)
     {
         if (elevation1 == elevation2)
         {
             return HexEdgeType.Flat;
         }
-        if(Mathf.Abs(elevation1-elevation2) == 1)
+        if (Mathf.Abs(elevation1 - elevation2) == 1)
         {
             return HexEdgeType.Slope;
         }
@@ -200,14 +198,14 @@ public static class HexMetrics
         if (Wrap && position.x < InnerDiameter * 1.5f)
         {
             Vector4 sample2 = NoiseSource.GetPixelBilinear((position.x + WrapSize * InnerDiameter) * NoiseScale, position.z * NoiseScale);
-            sample = Vector4.Lerp(sample2, sample, position.x * (1f / InnerDiameter)-0.5f);
+            sample = Vector4.Lerp(sample2, sample, position.x * (1f / InnerDiameter) - 0.5f);
         }
         return sample;
     }
 
     public static Vector3 GetSolidEdgeMiddle(HexDirection dir)
     {
-        return(Corners[(int)dir] + Corners[(int)dir + 1]) * (0.5f * SolidFactor);
+        return (Corners[(int)dir] + Corners[(int)dir + 1]) * (0.5f * SolidFactor);
     }
 
     public static Vector3 PerturbVector(Vector3 v)
@@ -219,7 +217,7 @@ public static class HexMetrics
     }
 
 
-    private static float[][] m_featureThresholds = 
+    private static float[][] m_featureThresholds =
     {
         new float[] {0.0f, 0.0f, 0.4f},
         new float[] {0.0f, 0.4f, 0.6f},
@@ -250,7 +248,7 @@ public static class HexMetrics
 
 public struct HexHash
 {
-    public float a, b,c,choice,randomRotation;
+    public float a, b, c, choice, randomRotation;
 
     public static HexHash Create()
     {

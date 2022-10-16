@@ -1,8 +1,5 @@
-﻿using JetBrains.Annotations;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -54,7 +51,7 @@ public class HexGrid : MonoBehaviour
     private int m_currentCenterColumnIndex = -1;
 
 
-        public List<HexCell> GetHexCells()
+    public List<HexCell> GetHexCells()
     {
         return m_cells;
     }
@@ -68,7 +65,7 @@ public class HexGrid : MonoBehaviour
         m_hexCellShaderData = gameObject.AddComponent<HexCellDataShader>();
         m_hexCellShaderData.HexGrid = this;
 
-        CreateMap(CellCountX,CellCountZ,Wrap);
+        CreateMap(CellCountX, CellCountZ, Wrap);
 
     }
 
@@ -79,19 +76,19 @@ public class HexGrid : MonoBehaviour
             HexMetrics.NoiseSource = NoiseSource;
             HexMetrics.WrapSize = Wrap ? CellCountX : 0;
             HexMetrics.InitialiseHashGrid(Seed);
-            
+
             HexUnit.UnitPrefab = HexUnitPrefab;
-            
+
             ResetVisability();
         }
     }
 
-    public void CreateMap(int x,int z,bool wrap)
+    public void CreateMap(int x, int z, bool wrap)
     {
         ClearPath();
         ClearUnits();
 
-        if (x <= 0 || x % HexMetrics.ChunkSizeX != 0 ||z <= 0 || z % HexMetrics.ChunkSizeZ != 0)
+        if (x <= 0 || x % HexMetrics.ChunkSizeX != 0 || z <= 0 || z % HexMetrics.ChunkSizeZ != 0)
         {
             Debug.LogError("Unsupported map size.");
             return;
@@ -159,7 +156,7 @@ public class HexGrid : MonoBehaviour
             m_columns[i].localPosition = position;
         }
 
-        }
+    }
 
     public int NumCellsX
     {
@@ -182,12 +179,12 @@ public class HexGrid : MonoBehaviour
 
         m_gridChunks = new HexGridChunk[m_chunkCountX * m_chunkCountZ];
         int count = 0;
-        for(int z = 0;z< m_chunkCountZ; ++z)
+        for (int z = 0; z < m_chunkCountZ; ++z)
         {
-            for(int x=0;x< m_chunkCountX; ++x)
+            for (int x = 0; x < m_chunkCountX; ++x)
             {
                 HexGridChunk chunk = Instantiate(HexGridChunkPrefab);
-                chunk.transform.SetParent(m_columns[x],false);
+                chunk.transform.SetParent(m_columns[x], false);
                 m_gridChunks[count++] = chunk;
             }
         }
@@ -236,7 +233,7 @@ public class HexGrid : MonoBehaviour
         }
         return null;
     }
-    public HexCell GetCell(int xOffset,int zOffset)
+    public HexCell GetCell(int xOffset, int zOffset)
     {
         int cellIndex = (zOffset * CellCountX) + xOffset;
         return GetCell(cellIndex);
@@ -245,18 +242,18 @@ public class HexGrid : MonoBehaviour
 
     public HexCell GetCell(int cellIndex)
     {
-        if(cellIndex >=0 && cellIndex<=m_cells.Count-1)
+        if (cellIndex >= 0 && cellIndex <= m_cells.Count - 1)
         {
             return m_cells[cellIndex];
         }
         return null;
     }
 
-    private Random m_random = new Random();
+    //private Random m_random = new Random();
     public HexCell GetRandomCell()
     {
         int index = Random.Range(0, m_cells.Count);
-        if(index >= 0 && index < m_cells.Count)
+        if (index >= 0 && index < m_cells.Count)
         {
             return m_cells[index];
         }
@@ -266,14 +263,14 @@ public class HexGrid : MonoBehaviour
     public int CellCount
     {
         get { return m_cells.Count; }
-            
+
     }
 
 
-    public HexCell CreateCell(int x,int z,int index)
+    public HexCell CreateCell(int x, int z, int index)
     {
         Vector3 position = Vector3.zero;
-        position.x = (x - (z/2) + (z * 0.5f )) *(HexMetrics.InnerDiameter);
+        position.x = (x - (z / 2) + (z * 0.5f)) * (HexMetrics.InnerDiameter);
         position.y = 0f;
         position.z = z * (HexMetrics.OuterRadius * 1.5f);
 
@@ -295,7 +292,7 @@ public class HexGrid : MonoBehaviour
         AddCellToChunk(x, z, hexCell);
 
 
-        if(x > 0)
+        if (x > 0)
         {
             hexCell.SetNeighbour(HexDirection.W, m_cells[index - 1]);
             if (Wrap && x == CellCountX - 1)
@@ -304,9 +301,9 @@ public class HexGrid : MonoBehaviour
             }
         }
 
-        if(z > 0)
+        if (z > 0)
         {
-            if((z & 1) == 0)
+            if ((z & 1) == 0)
             {
                 hexCell.SetNeighbour(HexDirection.SE, m_cells[index - CellCountX]);
 
@@ -332,7 +329,7 @@ public class HexGrid : MonoBehaviour
                 {
                     hexCell.SetNeighbour(HexDirection.SE, m_cells[index - CellCountX * 2 + 1]);
                 }
-                 
+
 
             }
         }
@@ -370,21 +367,21 @@ public class HexGrid : MonoBehaviour
 
     public void ShowUI(bool visible)
     {
-        foreach(HexGridChunk chunk in m_gridChunks)
+        foreach (HexGridChunk chunk in m_gridChunks)
         {
             chunk.ShowUI(visible);
         }
     }
 
-    public void FindPathTo(HexCell fromCell,HexCell toCell,HexUnit hexUnit,List<HexCell> results)
+    public void FindPathTo(HexCell fromCell, HexCell toCell, HexUnit hexUnit, List<HexCell> results)
     {
         //StopAllCoroutines();
         //StartCoroutine(Search(fromCell,toCell,speed));
-        Search(fromCell, toCell, hexUnit,results);
+        Search(fromCell, toCell, hexUnit, results);
     }
 
 
-    void Search(HexCell fromCell,HexCell toCell,HexUnit hexUnit,List<HexCell> results)
+    void Search(HexCell fromCell, HexCell toCell, HexUnit hexUnit, List<HexCell> results)
     {
         m_currentPathFrom = fromCell;
         m_currentPathTo = toCell;
@@ -412,17 +409,17 @@ public class HexGrid : MonoBehaviour
             HexCell current = m_searchQueue.Dequeue();
             current.SearchPhase += 1;
 
-            if(current == toCell)
+            if (current == toCell)
             {
                 BuildFinalPath(fromCell, toCell);
-                if(results != null && m_finalPath.Count > 0)
+                if (results != null && m_finalPath.Count > 0)
                 {
                     results.AddRange(m_finalPath);
                 }
                 break;
             }
 
-            int currentTurn = (current.Distance -1) / speed;
+            int currentTurn = (current.Distance - 1) / speed;
 
             for (HexDirection dir = HexDirection.NE; dir <= HexDirection.NW; dir++)
             {
@@ -433,13 +430,13 @@ public class HexGrid : MonoBehaviour
                     continue;
                 }
 
-                if(!hexUnit.IsValidDestination(neighbour))
+                if (!hexUnit.IsValidDestination(neighbour))
                 {
                     continue;
                 }
 
                 int moveCost = hexUnit.GetMoveCost(current, neighbour, dir);
-                if(moveCost < 0)
+                if (moveCost < 0)
                 {
                     continue;
                 }
@@ -448,29 +445,29 @@ public class HexGrid : MonoBehaviour
 
                 int newDistance = distance + moveCost;
 
-                int turn = (newDistance -1) / speed;
-                if(turn > currentTurn)
+                int turn = (newDistance - 1) / speed;
+                if (turn > currentTurn)
                 {
                     newDistance = (turn * speed) + moveCost;
                 }
 
 
-                if(neighbour.SearchPhase < m_searchFrontierPhase)
+                if (neighbour.SearchPhase < m_searchFrontierPhase)
                 {
                     neighbour.SearchPhase = m_searchFrontierPhase;
                     neighbour.Distance = newDistance;
-                    SetPathCurrentNext(current,neighbour);
+                    SetPathCurrentNext(current, neighbour);
                     neighbour.SearchHeuristic = neighbour.Coordinates.DistanceTo(toCell.Coordinates);
                     m_searchQueue.Enqueue(neighbour);
                 }
-                else if(newDistance < neighbour.Distance)
+                else if (newDistance < neighbour.Distance)
                 {
                     neighbour.Distance = newDistance;
                     SetPathCurrentNext(current, neighbour);
                     m_searchQueue.Change(neighbour);
                 }
 
-                
+
             }
 
 
@@ -490,8 +487,8 @@ public class HexGrid : MonoBehaviour
     /// Generates the path from start to end.
     /// </summary>
     /// <returns>The path from start to end</returns>
-    LinkedList<HexCell> m_finalPath= new LinkedList<HexCell>();
-    private void BuildFinalPath(HexCell startPoint,HexCell endPoint)
+    LinkedList<HexCell> m_finalPath = new LinkedList<HexCell>();
+    private void BuildFinalPath(HexCell startPoint, HexCell endPoint)
     {
         HexCell curPrev = endPoint;
         m_finalPath.AddFirst(curPrev);
@@ -504,7 +501,7 @@ public class HexGrid : MonoBehaviour
     }
 
     Dictionary<HexCell, HexCell> m_finalPathDictionary = new Dictionary<HexCell, HexCell>();
-    public void SetPathCurrentNext(HexCell current,HexCell next)
+    public void SetPathCurrentNext(HexCell current, HexCell next)
     {
         m_finalPathDictionary[next] = current;
     }
@@ -514,7 +511,7 @@ public class HexGrid : MonoBehaviour
     {
         m_searchQueue.Clear();
         foreach (HexCell hexCell in m_finalPath)
-        { 
+        {
             hexCell.SetLabel(null);
             hexCell.DisableHighlight();
         }
@@ -530,7 +527,7 @@ public class HexGrid : MonoBehaviour
         unit.HexGrid = this;
         unit.Location = location;
         unit.Orientation = orientation;
-        
+
     }
 
     public void MakeChildOfColumn(Transform child, int columnIndex)
@@ -548,7 +545,7 @@ public class HexGrid : MonoBehaviour
 
     void ClearUnits()
     {
-        foreach(HexUnit unit in m_unitsList)
+        foreach (HexUnit unit in m_unitsList)
         {
             RemoveUnit(unit);
         }
@@ -586,7 +583,7 @@ public class HexGrid : MonoBehaviour
         for (int i = 0; i < m_gridChunks.Length; i++)
         {
             m_gridChunks[i].Refresh();
-        }   
+        }
 
 
         int unitCount = reader.ReadInt32();
@@ -603,12 +600,12 @@ public class HexGrid : MonoBehaviour
     }
 
 
-    public void IncreaseVisibilty(HexCell fromCell,int range)
+    public void IncreaseVisibilty(HexCell fromCell, int range)
     {
         List<HexCell> cells = GetVisibleCells(fromCell, range);
-        foreach(HexCell cell in cells)
+        foreach (HexCell cell in cells)
         {
-            cell.IncreaseVisibility(); 
+            cell.IncreaseVisibility();
         }
         ListPool<HexCell>.Return(cells);
     }
@@ -663,9 +660,9 @@ public class HexGrid : MonoBehaviour
                     continue;
                 }
 
-                int distance = current.Distance +1;
+                int distance = current.Distance + 1;
                 //if(distance + neighbour.ViewElevation > range)
-                if (distance + neighbour.ViewElevation  > range || distance > fromCoordinates.DistanceTo(neighbour.Coordinates))
+                if (distance + neighbour.ViewElevation > range || distance > fromCoordinates.DistanceTo(neighbour.Coordinates))
                 {
                     continue;
                 }
@@ -678,7 +675,7 @@ public class HexGrid : MonoBehaviour
                     neighbour.SearchHeuristic = 0;
                     m_searchQueue.Enqueue(neighbour);
                 }
-                else if (distance< neighbour.Distance)
+                else if (distance < neighbour.Distance)
                 {
                     neighbour.Distance = distance;
                     SetPathCurrentNext(current, neighbour);
@@ -691,12 +688,12 @@ public class HexGrid : MonoBehaviour
 
     public void ResetVisability()
     {
-        foreach(HexCell cell in m_cells)
+        foreach (HexCell cell in m_cells)
         {
             cell.ResetVisability();
         }
 
-        foreach(HexUnit hexUnit in m_unitsList)
+        foreach (HexUnit hexUnit in m_unitsList)
         {
             IncreaseVisibilty(hexUnit.Location, hexUnit.VisionRange);
         }

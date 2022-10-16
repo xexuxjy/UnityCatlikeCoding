@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class HexMapEditor : MonoBehaviour
@@ -133,7 +127,7 @@ public class HexMapEditor : MonoBehaviour
     }
     public void CreateUnit(HexCell cell)
     {
-        
+
         if (cell && cell.HexUnit == null)
         {
             HexUnit unit = Instantiate(HexUnit.UnitPrefab);
@@ -158,9 +152,9 @@ public class HexMapEditor : MonoBehaviour
 
     private void ValidateDrag(HexCell hexCell)
     {
-        for (m_dragDirection = HexDirection.NE; m_dragDirection <= HexDirection.NW ;m_dragDirection++)
+        for (m_dragDirection = HexDirection.NE; m_dragDirection <= HexDirection.NW; m_dragDirection++)
         {
-            if(m_previousHexCell.GetNeighbour(m_dragDirection) == hexCell)
+            if (m_previousHexCell.GetNeighbour(m_dragDirection) == hexCell)
             {
                 m_isDrag = true;
                 return;
@@ -207,16 +201,16 @@ public class HexMapEditor : MonoBehaviour
             {
                 cell.Elevation = m_activeElevation;
             }
-            if(m_applyWaterLevel)
+            if (m_applyWaterLevel)
             {
                 cell.WaterLevel = m_activeWaterLevel;
             }
-            if(m_applyUrbanDensity)
+            if (m_applyUrbanDensity)
             {
                 cell.UrbanDensityLevel = m_activeUrbanDensityLevel;
             }
-            
-            if(m_riverMode == OptionalToggle.No)
+
+            if (m_riverMode == OptionalToggle.No)
             {
                 cell.RemoveRiver();
             }
@@ -226,7 +220,7 @@ public class HexMapEditor : MonoBehaviour
                 cell.RemoveRoads();
             }
 
-           
+
 
             if (m_wallMode != OptionalToggle.Ignore)
             {
@@ -242,13 +236,13 @@ public class HexMapEditor : MonoBehaviour
             if (m_isDrag)
             {
                 HexCell otherCell = cell.GetNeighbour(m_dragDirection.Opposite());
-                if(otherCell)
+                if (otherCell)
                 {
                     if (m_riverMode == OptionalToggle.Yes)
                     {
                         otherCell.SetOutgoingRiver(m_dragDirection);
                     }
-                    else if(m_roadMode == OptionalToggle.Yes)
+                    else if (m_roadMode == OptionalToggle.Yes)
                     {
                         otherCell.AddRoad(m_dragDirection);
                     }
@@ -299,7 +293,7 @@ public class HexMapEditor : MonoBehaviour
 
     public void SetUrbanDensityLevel(float value)
     {
-        m_activeUrbanDensityLevel= (int)value;
+        m_activeUrbanDensityLevel = (int)value;
     }
 
     public void SetApplyUrbanDensityLevel(bool toggle)
@@ -358,9 +352,9 @@ public class HexMapEditor : MonoBehaviour
     public void ShowTerrainMesh(bool value)
     {
         HexGridChunk[] gridChunks = GameObject.FindObjectsOfType<HexGridChunk>();
-        if(gridChunks != null)
+        if (gridChunks != null)
         {
-            foreach(HexGridChunk gridChunk in gridChunks)
+            foreach (HexGridChunk gridChunk in gridChunks)
             {
                 gridChunk.Terrain.gameObject.SetActive(value);
             }
@@ -430,7 +424,7 @@ public class HexMapEditor : MonoBehaviour
 
     public void SetApplySpecialFeature(bool toggle)
     {
-        m_applySpecialFeature= toggle;
+        m_applySpecialFeature = toggle;
     }
 
     public void SetSpecialFeatureIndex(float index)
@@ -440,7 +434,7 @@ public class HexMapEditor : MonoBehaviour
 
     public void ShowGrid(bool visible)
     {
-        if(visible)
+        if (visible)
         {
             TerrainMaterial.EnableKeyword("GRID_ON");
         }
