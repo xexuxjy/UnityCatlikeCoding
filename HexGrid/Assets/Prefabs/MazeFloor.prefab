@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1447600975392988072}
   - component: {fileID: 3047679985564366177}
   - component: {fileID: 1435855480819864801}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: MazeFloor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
