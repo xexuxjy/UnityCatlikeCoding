@@ -46,7 +46,7 @@ public class MazeVisualisation : MonoBehaviour
                     square.GetComponent<Renderer>().material.color = mazeSquare.SquareColour;
                 }
 
-                if(mazeSquare.IsRoom)
+                if(mazeSquare.MazeRoom != null)
                 {
                     square.GetComponent<Renderer>().material.color = Color.yellow;
                 }

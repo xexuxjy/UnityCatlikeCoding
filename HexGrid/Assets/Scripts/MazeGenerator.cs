@@ -13,7 +13,11 @@ public class MazeGenerator : MonoBehaviour
     public int RoomMin = 2;
     public int RoomMax = 5;
 
+    [Range(0f,1f)]
+    public float CircleRoomChance = 0.1f;
+
     Maze m_maze;
+
 
 
 
@@ -25,12 +29,78 @@ public class MazeGenerator : MonoBehaviour
     public void BuildMaze()
     {
         m_maze = new Maze(Width,Height);
-        m_maze.GenerateRooms(RoomMin,RoomMax,MaxRooms);
-        m_maze.Generate();
+        m_maze.Reset();
+        GenerateRooms(RoomMin,RoomMax,MaxRooms,m_maze);
+        Generate(m_maze);
     }
 
     public Maze Maze
     { get { return m_maze; } }
+
+
+
+    public void GenerateRooms(int roomMin,int roomMax,int maxRooms,Maze maze)
+    {
+        int maxAttempts = 200;
+        int attemptCount = 0;
+        int roomsGenerated = 0;
+        
+        while(attemptCount < maxAttempts && roomsGenerated < maxRooms)
+        {
+
+            int roomWidth = Random.Range(roomMin,roomMax);
+            int roomHeight = Random.Range(roomMin,roomMax);
+            // pick a random spot, then try and set all points to a room.
+            int randomX = Random.Range(0,Width-roomWidth);
+            int randomY = Random.Range(0,Height-roomHeight);
+
+            RoomShape roomShape = Random.value < CircleRoomChance?RoomShape.Circle:RoomShape.Rectangle;
+
+            MazeRoom mazeRoom = MazeRoom.BuildRoom(RoomShape.Circle,randomX,randomY,roomWidth,roomHeight,maze);
+            
+            // valid room, so mark all squares and form connections
+            if(mazeRoom != null)
+            {
+                attemptCount = 0;
+                roomsGenerated++;
+                maze.AddRoom(mazeRoom);
+            }
+            else
+            {
+                attemptCount++;
+            }
+        }
+    }
+    private Stack<MazeSquare> m_generationStack = new  Stack<MazeSquare>();
+
+    public void Generate(Maze maze)
+    {
+        int randomX = Random.Range(0,Width);
+        int randomY = Random.Range(0,Height);
+
+        MazeSquare startSquare = maze.GetSquare(randomX,randomY);
+        startSquare.SquareColour = Color.magenta;
+        startSquare.Visited = true;
+        m_generationStack.Push(startSquare);
+        
+
+        while(m_generationStack.Count > 0)
+        {
+            MazeSquare currentSquare = m_generationStack.Pop();
+            MazeSquare neighbour = maze.GetUnvisitedNeighbour(currentSquare);
+            if(neighbour != null)
+            {
+                m_generationStack.Push(currentSquare);
+                Direction dir = Maze.DirectionBetweenSquare(currentSquare,neighbour);
+                currentSquare.JoinSquare(neighbour,dir);
+
+                neighbour.Visited = true;
+                m_generationStack.Push(neighbour);
+            }
+        }
+
+    }
+
 
 }
 
@@ -38,9 +108,9 @@ public class MazeGenerator : MonoBehaviour
 public class Maze
 {
     private MazeSquare[] m_mazeSquares;
+    private List<MazeRoom> m_mazeRooms = new List<MazeRoom>();
     private int m_width;
     private int m_height;
-    private Stack<MazeSquare> m_generationStack = new  Stack<MazeSquare>();
 
     public int Width{ get { return m_width; } }
     public int Height{ get { return m_height; } }
@@ -56,9 +126,14 @@ public class Maze
         {
             for(int x=0;x<width;x++)
             {
-                m_mazeSquares[GetIndex(x,y)] = new MazeSquare(new Vector2(x,y));
+                m_mazeSquares[GetIndex(x,y)] = new MazeSquare(new Vector2Int(x,y));
             }
         }
+    }
+
+    public void AddRoom(MazeRoom room)
+    {
+        m_mazeRooms.Add(room);
     }
 
     public int GetIndex(int x,int y)
@@ -108,105 +183,10 @@ public class Maze
 
     }
 
-    public void GenerateRooms(int roomMin,int roomMax,int maxRooms)
-    {
-        int maxAttempts = 200;
-        int attemptCount = 0;
-        int roomsGenerated = 0;
-        
-        while(attemptCount < maxAttempts && roomsGenerated < maxRooms)
-        {
 
-            int roomWidth = Random.Range(roomMin,roomMax);
-            int roomHeight = Random.Range(roomMin,roomMax);
-            // pick a random spot, then try and set all points to a room.
-            int randomX = Random.Range(0,m_width-roomWidth);
-            int randomY = Random.Range(0,m_height-roomHeight);
-
-            MazeSquare startSquare = m_mazeSquares[GetIndex(randomX,randomY)];
-            bool validRoom = true;
-            if(!startSquare.IsRoom)
-            {
-                for(int y=0;y<roomHeight;++y)
-                {
-                    for(int x=0;x<roomWidth;++x)
-                    {
-                        MazeSquare roomSquare = GetSquare(randomX+x,randomY+y);
-                        if(roomSquare == null || roomSquare.IsRoom)
-                        {
-                            validRoom = false;
-                            break;
-                        }
-                    }
-                    if(!validRoom)
-                    {
-                        break;
-                    }
-                }
-            }
-            
-            // valid room, so mark all squares and form connections
-            if(validRoom)
-            {
-                attemptCount = 0;
-                roomsGenerated++;
-
-                for(int y=0;y<roomHeight;++y)
-                {
-                    for(int x=0;x<roomWidth;++x)
-                    {
-                        MazeSquare roomSquare = GetSquare(randomX+x,randomY+y);
-                        roomSquare.IsRoom = true;
-                        if(x < roomWidth-1)
-                        {
-                            roomSquare.JoinSquare(GetSquare(randomX+x+1,randomY+y),Direction.East);
-                        }
-                        if(y < roomHeight -1)
-                        {
-                            roomSquare.JoinSquare(GetSquare(randomX+x,randomY+y+1),Direction.North);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                attemptCount++;
-            }
-        }
-    }
-
-
-    public void Generate()
-    {
-        Reset();
-        int randomX = Random.Range(0,m_width);
-        int randomY = Random.Range(0,m_height);
-
-        MazeSquare startSquare = m_mazeSquares[GetIndex(randomX,randomY)];
-        startSquare.SquareColour = Color.magenta;
-        startSquare.Visited = true;
-        m_generationStack.Push(startSquare);
-        
-
-        while(m_generationStack.Count > 0)
-        {
-            MazeSquare currentSquare = m_generationStack.Pop();
-            MazeSquare neighbour = GetUnvisitedNeighbour(currentSquare);
-            if(neighbour != null)
-            {
-                m_generationStack.Push(currentSquare);
-                Direction dir = DirectionBetweenSquare(currentSquare,neighbour);
-                currentSquare.JoinSquare(neighbour,dir);
-
-                neighbour.Visited = true;
-                m_generationStack.Push(neighbour);
-            }
-        }
-
-    }
 
     private List<MazeSquare> m_scratchPad = new List<MazeSquare>();
-    MazeSquare GetUnvisitedNeighbour(MazeSquare square)
+    public MazeSquare GetUnvisitedNeighbour(MazeSquare square)
     {
         m_scratchPad.Clear();
         for(int i=0;i<(int)Direction.NumDirections;++i)
@@ -254,18 +234,129 @@ public class Maze
 
 }
 
+public enum RoomShape
+{
+    Rectangle,
+    Circle
+}
+
+public class MazeRoom
+{
+    RoomShape RoomShape;
+    public List<MazeSquare> Squares = new List<MazeSquare>();
+
+
+    public static List<MazeSquare> ScratchPad = new List<MazeSquare>();
+    public static MazeRoom BuildRoom(RoomShape shape,int xStart,int yStart,int width,int height,Maze maze)
+    {
+        ScratchPad.Clear();
+        bool validRoom = true;
+
+        if(shape == RoomShape.Rectangle)
+        {
+            MazeSquare startSquare = maze.GetSquare(xStart,yStart);
+            if(startSquare.MazeRoom == null)
+            {
+                ScratchPad.Add(startSquare);
+                for(int y=0;y<height;++y)
+                {
+                    for(int x=0;x<width;++x)
+                    {
+                        MazeSquare roomSquare = maze.GetSquare(xStart+x,yStart+y);
+                        if(roomSquare == null || roomSquare.MazeRoom != null)
+                        {
+                            validRoom = false;
+                            break;
+                        }
+                        ScratchPad.Add(roomSquare);
+                    }
+                    if(!validRoom)
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+        else
+        {
+            MazeSquare startSquare = maze.GetSquare(xStart,yStart);
+            for (int i = -width; i <= width; ++i)
+            {
+                for (int j = -width; j <= width; ++j)
+                {
+                    Vector2Int newPoint = new Vector2Int(xStart+j,yStart+i);
+                    if(Vector2Int.Distance(startSquare.Location,newPoint) < width)
+                    {
+                        MazeSquare roomSquare = maze.GetSquare(xStart+j,yStart+i);
+                        if(roomSquare == null || roomSquare.MazeRoom != null)
+                        {
+                            validRoom = false;
+                            break;
+                        }
+                        ScratchPad.Add(roomSquare);
+                    }
+                }
+                if(!validRoom)
+                {
+                    break;
+                }
+            }
+        }
+        
+        if(validRoom)
+        {
+            MazeRoom room = new MazeRoom(){RoomShape = shape };
+            room.Squares.AddRange(ScratchPad);
+
+
+            // join allSquaresTogeher? (in-efficient)
+            foreach(MazeSquare square in room.Squares)
+            {
+                square.MazeRoom = room;
+
+                MazeSquare linkedSquare = maze.GetSquare(square,Direction.North);
+                if(linkedSquare != null && room.Squares.Contains(linkedSquare))
+                {
+                    square.JoinSquare(linkedSquare,Direction.North);
+                }
+                linkedSquare = maze.GetSquare(square,Direction.South);
+                if(linkedSquare != null && room.Squares.Contains(linkedSquare))
+                {
+                    square.JoinSquare(linkedSquare,Direction.South);
+                }
+                linkedSquare = maze.GetSquare(square,Direction.East);
+                if(linkedSquare != null && room.Squares.Contains(linkedSquare))
+                {
+                    square.JoinSquare(linkedSquare,Direction.East);
+                }
+
+                linkedSquare = maze.GetSquare(square,Direction.West);
+                if(linkedSquare != null && room.Squares.Contains(linkedSquare))
+                {
+                    square.JoinSquare(linkedSquare,Direction.West);
+                }
+            }
+            return room;
+        }
+        return null;
+    }
+
+
+}
+
 
 
 public class MazeSquare
 {
-    public Vector2 Location = new Vector2();
+    public Vector2Int Location = new Vector2Int();
     //public MazeSquare[] Links = new MazeSquare[(int)Direction.NumDirections];
     public bool[] PathExists = new bool[(int)Direction.NumDirections];
     public bool Visited;
     public Color SquareColour = Color.black;
-    public bool IsRoom;
+    public MazeRoom MazeRoom;
 
-    public MazeSquare(Vector2 location)
+
+    public MazeSquare(Vector2Int location)
     {
         Location = location;
     }
